@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import L from "leaflet";
 import type { Stage } from "@/data/stages";
+import { burgasUmapLayers } from "@/data/burgasUmap";
 import { Button } from "@/components/ui/button";
 import { LocateFixed, Loader2 } from "lucide-react";
 
@@ -33,6 +34,54 @@ function userIcon() {
 
 // Cache OSRM responses in-memory per stage
 const routeCache = new Map<number, [number, number][]>();
+
+function featurePopup(properties: Record<string, unknown>) {
+  const name = String(properties.name ?? "Детайл от картата");
+  const body = String(properties.description ?? properties.Съдържание ?? "");
+  return `<div style="font-family:system-ui,sans-serif;max-width:260px;"><strong>${name}</strong>${body ? `<div style="margin-top:6px;font-size:12px;color:#4b5563;">${body}</div>` : ""}</div>`;
+}
+
+function addBurgasReferenceLayers(map: L.Map, layers: L.LayerGroup) {
+  if (!map.getPane("burgas-detail")) {
+    map.createPane("burgas-detail");
+    map.getPane("burgas-detail")!.style.zIndex = "450";
+  }
+
+  L.geoJSON(burgasUmapLayers.raceStages as never, {
+    pane: "burgas-detail",
+    style: (feature) => {
+      const props = (feature?.properties ?? {}) as Record<string, string>;
+      return {
+        color: props.stroke || "#ec4899",
+        weight: Number(props["stroke-width"] || 8),
+        opacity: Number(props["stroke-opacity"] || 1),
+        lineCap: "round",
+        lineJoin: "round",
+      };
+    },
+    pointToLayer: (_feature, latlng) => L.marker(latlng, { icon: makeIcon("#ec4899", "G") }),
+    onEachFeature: (feature, layer) => {
+      layer.bindPopup(featurePopup((feature.properties ?? {}) as Record<string, unknown>));
+    },
+  }).addTo(layers);
+
+  L.geoJSON(burgasUmapLayers.trafficOrganization as never, {
+    pane: "burgas-detail",
+    style: (feature) => {
+      const props = (feature?.properties ?? {}) as Record<string, string>;
+      return {
+        color: props.stroke || "#b91c1c",
+        weight: Number(props["stroke-width"] || 3),
+        opacity: Number(props["stroke-opacity"] || 0.75),
+        fillColor: props.fill || "#dc2626",
+        fillOpacity: Number(props["fill-opacity"] || 0.18),
+      };
+    },
+    onEachFeature: (feature, layer) => {
+      layer.bindPopup(featurePopup((feature.properties ?? {}) as Record<string, unknown>));
+    },
+  }).addTo(layers);
+}
 
 async function fetchOsrmRoute(coords: [number, number][]): Promise<[number, number][]> {
   // OSRM expects lng,lat; chunk if too many waypoints (<=25 typically OK on demo server)
@@ -101,6 +150,11 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
     const visibleStages = stages.filter((s) => activeStageId === 0 || s.id === activeStageId);
     const allLatLngs: L.LatLngExpression[] = [];
     let cancelled = false;
+
+    if (activeStageId === 0 || activeStageId === 1 || activeStageId === 2) {
+      addBurgasReferenceLayers(map, layers);
+      allLatLngs.push([42.4939, 27.477], [42.6587, 27.7307]);
+    }
 
     visibleStages.forEach((stage) => {
       const waypointLatLngs = stage.waypoints.map((w) => w.coords as [number, number]);

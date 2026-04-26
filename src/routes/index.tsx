@@ -77,7 +77,7 @@ function Index() {
             <div>
               <h2 className="text-3xl font-bold tracking-tight text-balance">Маршрут на картата</h2>
               <p className="text-muted-foreground mt-1">
-                Кликни на маркер за час на преминаване и затваряне.
+                Бургас е нанесен с детайлните uMap слоеве от референцията; останалите етапи се чертаят по OSRM.
               </p>
             </div>
           </div>
