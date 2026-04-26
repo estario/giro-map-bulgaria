@@ -8,6 +8,7 @@ import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/
 import { MapPin, Clock, Route as RouteIcon, AlertTriangle, Calendar } from "lucide-react";
 
 const RouteMap = lazy(() => import("@/components/giro/RouteMap"));
+const NearMePanel = lazy(() => import("@/components/giro/NearMePanel"));
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -27,6 +28,7 @@ function Index() {
   const [activeStage, setActiveStage] = useState<string>("0");
   const activeId = parseInt(activeStage, 10);
   const totalKm = stages.reduce((s, st) => s + st.distanceKm, 0);
+  const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
 
   return (
     <div className="min-h-screen bg-background antialiased">
@@ -96,7 +98,17 @@ function Index() {
                   <div className="h-[600px] w-full rounded-2xl bg-muted animate-pulse" />
                 }
               >
-                <RouteMap stages={stages} activeStageId={activeId} />
+                <RouteMap
+                  stages={stages}
+                  activeStageId={activeId}
+                  onUserLocation={setUserLocation}
+                />
+              </Suspense>
+            </div>
+
+            <div className="mt-6">
+              <Suspense fallback={<div className="h-40 rounded-2xl bg-muted animate-pulse" />}>
+                <NearMePanel userLocation={userLocation} />
               </Suspense>
             </div>
 
