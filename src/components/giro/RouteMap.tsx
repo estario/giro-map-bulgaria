@@ -32,6 +32,15 @@ function userIcon() {
   });
 }
 
+function infoIcon(color: string) {
+  return L.divIcon({
+    className: "giro-info-marker",
+    html: `<div style="background:${color};color:#fff;border:2px solid #fff;border-radius:9999px;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;box-shadow:0 4px 10px rgba(0,0,0,0.25);font-family:system-ui,sans-serif;">i</div>`,
+    iconSize: [22, 22],
+    iconAnchor: [11, 11],
+  });
+}
+
 // Cache OSRM responses in-memory per stage
 const routeCache = new Map<number, [number, number][]>();
 
@@ -76,6 +85,10 @@ function addBurgasReferenceLayers(map: L.Map, layers: L.LayerGroup) {
         fillColor: props.fill || "#dc2626",
         fillOpacity: Number(props["fill-opacity"] || 0.18),
       };
+    },
+    pointToLayer: (feature, latlng) => {
+      const props = (feature?.properties ?? {}) as Record<string, string>;
+      return L.marker(latlng, { icon: infoIcon(props.fill || "#b91c1c") });
     },
     onEachFeature: (feature, layer) => {
       layer.bindPopup(featurePopup((feature.properties ?? {}) as Record<string, unknown>));
