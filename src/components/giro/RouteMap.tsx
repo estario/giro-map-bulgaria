@@ -151,6 +151,11 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
     const allLatLngs: L.LatLngExpression[] = [];
     let cancelled = false;
 
+    if (activeStageId === 0 || activeStageId === 1 || activeStageId === 2) {
+      addBurgasReferenceLayers(map, layers);
+      allLatLngs.push([42.4939, 27.477], [42.6587, 27.7307]);
+    }
+
     visibleStages.forEach((stage) => {
       const waypointLatLngs = stage.waypoints.map((w) => w.coords as [number, number]);
       allLatLngs.push(...waypointLatLngs);
