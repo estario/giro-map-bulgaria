@@ -68,6 +68,7 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
   const layersRef = useRef<L.LayerGroup | null>(null);
   const userLayerRef = useRef<L.LayerGroup | null>(null);
   const [locating, setLocating] = useState(false);
+  const [routingCount, setRoutingCount] = useState(0);
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
@@ -142,15 +143,15 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
         layers.removeLayer(tempLine);
         L.polyline(geom, {
           color: stage.color,
-          weight: 10,
-          opacity: 0.18,
+          weight: 12,
+          opacity: 0.22,
           lineCap: "round",
           lineJoin: "round",
         }).addTo(layers);
         L.polyline(geom, {
           color: stage.color,
-          weight: 4,
-          opacity: 0.95,
+          weight: 5,
+          opacity: 1,
           lineCap: "round",
           lineJoin: "round",
         }).addTo(layers);
@@ -160,9 +161,11 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
       if (cached) {
         drawReal(cached);
       } else {
+        setRoutingCount((c) => c + 1);
         fetchOsrmRoute(waypointLatLngs).then((geom) => {
           if (geom.length > 0) routeCache.set(stage.id, geom);
           drawReal(geom);
+          setRoutingCount((c) => Math.max(0, c - 1));
         });
       }
     });
@@ -217,6 +220,12 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
         className="h-[600px] w-full rounded-2xl overflow-hidden shadow-[var(--shadow-rosa)] border border-border"
         style={{ background: "#f1f5f9" }}
       />
+      {routingCount > 0 && (
+        <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[400] inline-flex items-center gap-2 rounded-full bg-background/95 backdrop-blur px-4 py-2 text-xs font-semibold shadow-lg border border-border">
+          <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
+          Изчертаване по реалните пътища…
+        </div>
+      )}
       <Button
         onClick={handleLocate}
         size="sm"
