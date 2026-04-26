@@ -29,11 +29,11 @@ export const Route = createRootRoute({
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { title: "Giro d'Italia 2026 — Grande Partenza България" },
+      { name: "description", content: "Интерактивна карта на маршрута на Giro d'Italia 2026 в България: етапи Несебър–Бургас, Бургас–Велико Търново, Пловдив–София, часове и затворени улици." },
+      { name: "author", content: "Giro d'Italia BG" },
+      { property: "og:title", content: "Giro d'Italia 2026 — Grande Partenza България" },
+      { property: "og:description", content: "Маршрут, часове и затворени улици за Giro d'Italia 2026 в България." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
@@ -52,7 +52,7 @@ export const Route = createRootRoute({
 
 function RootShell({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="bg">
       <head>
         <HeadContent />
       </head>
