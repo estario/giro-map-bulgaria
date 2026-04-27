@@ -3,6 +3,7 @@ import L from "leaflet";
 import type { Stage } from "@/data/stages";
 import { burgasUmapLayers } from "@/data/burgasUmap";
 import { cityPrograms, tagColor, type CulturalEvent } from "@/data/events";
+import { GIRO_STAGES, type GiroPoint } from "@/data/giroStages";
 import { Button } from "@/components/ui/button";
 import { LocateFixed, Loader2, Sparkles } from "lucide-react";
 
@@ -84,8 +85,27 @@ function eventPopup(ev: CulturalEvent, cityName: string, color: string) {
   </div>`;
 }
 
-// Cache OSRM responses in-memory per stage
-const routeCache = new Map<number, [number, number][]>();
+// Map official KML stage data by stage id (1=Burgas, 2=Veliko Tarnovo, 3=Sofia)
+const officialStageById = new Map(GIRO_STAGES.map((s) => [s.stage, s]));
+
+const pointTypeStyle: Record<GiroPoint["type"], { color: string; glyph: string; size: number }> = {
+  start:    { color: "#16a34a", glyph: "S",  size: 28 },
+  km:       { color: "#1f2937", glyph: "•",  size: 14 },
+  halfway:  { color: "#f59e0b", glyph: "½",  size: 22 },
+  redbull:  { color: "#dc2626", glyph: "RB", size: 22 },
+  road:     { color: "#0ea5e9", glyph: "↦",  size: 18 },
+  poi:      { color: "#7c3aed", glyph: "★",  size: 20 },
+};
+
+function officialPointIcon(type: GiroPoint["type"]) {
+  const s = pointTypeStyle[type];
+  return L.divIcon({
+    className: "giro-official-marker",
+    html: `<div style="background:${s.color};color:#fff;border:2px solid #fff;border-radius:9999px;width:${s.size}px;height:${s.size}px;display:flex;align-items:center;justify-content:center;font-size:${Math.max(9, s.size / 2.4)}px;font-weight:700;box-shadow:0 2px 6px rgba(0,0,0,0.35);font-family:system-ui,sans-serif;line-height:1;">${s.glyph}</div>`,
+    iconSize: [s.size, s.size],
+    iconAnchor: [s.size / 2, s.size / 2],
+  });
+}
 
 function featurePopup(properties: Record<string, unknown>) {
   const name = String(properties.name ?? "Детайл от картата");
@@ -176,6 +196,7 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
   const [locating, setLocating] = useState(false);
   const [routingCount, setRoutingCount] = useState(0);
   const [showEvents, setShowEvents] = useState(true);
+  const [showOfficial, setShowOfficial] = useState(true);
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
@@ -219,13 +240,51 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
       const waypointLatLngs = stage.waypoints.map((w) => w.coords as [number, number]);
       allLatLngs.push(...waypointLatLngs);
 
-      // Draw markers + a temporary straight line first (fast paint)
-      const tempLine = L.polyline(waypointLatLngs, {
-        color: stage.color,
-        weight: 3,
-        opacity: 0.4,
-        dashArray: "6 6",
-      }).addTo(layers);
+      // Try to draw the OFFICIAL route geometry from the Giro KML data
+      const official = officialStageById.get(stage.id);
+      if (official && official.route.length > 1) {
+        // glow
+        L.polyline(official.route as L.LatLngExpression[], {
+          color: stage.color,
+          weight: 12,
+          opacity: 0.22,
+          lineCap: "round",
+          lineJoin: "round",
+        }).addTo(layers);
+        // main
+        L.polyline(official.route as L.LatLngExpression[], {
+          color: stage.color,
+          weight: 5,
+          opacity: 1,
+          lineCap: "round",
+          lineJoin: "round",
+        }).addTo(layers);
+        for (const p of official.route) allLatLngs.push(p as L.LatLngExpression);
+
+        // Official KML waypoints (KM markers, exits, POIs) — as a separate, toggleable layer
+        if (showOfficial) {
+          for (const pt of official.points) {
+            const m = L.marker([pt.lat, pt.lng], {
+              icon: officialPointIcon(pt.type),
+              zIndexOffset: pt.type === "start" || pt.type === "redbull" || pt.type === "halfway" ? 600 : 200,
+            }).addTo(layers);
+            m.bindPopup(
+              `<div style="font-family:system-ui,sans-serif;min-width:160px;">
+                <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:${stage.color};font-weight:800;">${stage.name} · ${pt.type}</div>
+                <div style="font-size:14px;font-weight:700;margin-top:4px;color:#1f1326;">${pt.name}</div>
+              </div>`,
+            );
+          }
+        }
+      } else {
+        // Fallback: dashed line between waypoints if no official KML for this stage
+        L.polyline(waypointLatLngs, {
+          color: stage.color,
+          weight: 3,
+          opacity: 0.4,
+          dashArray: "6 6",
+        }).addTo(layers);
+      }
 
       stage.waypoints.forEach((wp, i) => {
         const isStart = i === 0;
@@ -249,38 +308,6 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
           </div>
         `);
       });
-
-      // Then fetch real road geometry from OSRM (cached)
-      const drawReal = (geom: [number, number][]) => {
-        if (cancelled || geom.length === 0) return;
-        layers.removeLayer(tempLine);
-        L.polyline(geom, {
-          color: stage.color,
-          weight: 12,
-          opacity: 0.22,
-          lineCap: "round",
-          lineJoin: "round",
-        }).addTo(layers);
-        L.polyline(geom, {
-          color: stage.color,
-          weight: 5,
-          opacity: 1,
-          lineCap: "round",
-          lineJoin: "round",
-        }).addTo(layers);
-      };
-
-      const cached = routeCache.get(stage.id);
-      if (cached) {
-        drawReal(cached);
-      } else {
-        setRoutingCount((c) => c + 1);
-        fetchOsrmRoute(waypointLatLngs).then((geom) => {
-          if (geom.length > 0) routeCache.set(stage.id, geom);
-          drawReal(geom);
-          setRoutingCount((c) => Math.max(0, c - 1));
-        });
-      }
     });
 
     if (allLatLngs.length > 0) {
@@ -291,7 +318,7 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
     return () => {
       cancelled = true;
     };
-  }, [stages, activeStageId]);
+  }, [stages, activeStageId, showOfficial]);
 
   // Render cultural / sport event pins
   useEffect(() => {
@@ -403,6 +430,14 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
         >
           <Sparkles className="h-4 w-4" />
           <span className="ml-2">{showEvents ? "Скрий събития" : "Покажи събития"}</span>
+        </Button>
+        <Button
+          onClick={() => setShowOfficial((v) => !v)}
+          size="sm"
+          variant={showOfficial ? "default" : "secondary"}
+          className="shadow-lg"
+        >
+          <span className="ml-2">{showOfficial ? "Скрий KM маркери" : "Покажи KM маркери"}</span>
         </Button>
       </div>
       {/* Legend */}
