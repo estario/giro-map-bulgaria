@@ -9,6 +9,7 @@ import { MapPin, Clock, Route as RouteIcon, AlertTriangle, Calendar } from "luci
 
 const RouteMap = lazy(() => import("@/components/giro/RouteMap"));
 const NearMePanel = lazy(() => import("@/components/giro/NearMePanel"));
+const CulturalProgram = lazy(() => import("@/components/giro/CulturalProgram"));
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -126,6 +127,11 @@ function Index() {
             </TabsContent>
           </Tabs>
         </section>
+
+        {/* Cultural & sport program */}
+        <Suspense fallback={<div className="h-64 rounded-2xl bg-muted animate-pulse" />}>
+          <CulturalProgram />
+        </Suspense>
 
         {/* Footer note */}
         <footer className="border-t border-border pt-6 pb-10 text-sm text-muted-foreground">
