@@ -91,6 +91,7 @@
   --gradient-rosa: linear-gradient(135deg, oklch(0.70 0.19 0), oklch(0.82 0.15 5));
   --gradient-tricolore: linear-gradient(90deg, var(--italy-green) 0%, var(--italy-green) 33%, var(--italy-white) 33%, var(--italy-white) 66%, var(--italy-red) 66%, var(--italy-red) 100%);
   --shadow-rosa: 0 10px 30px -10px oklch(0.70 0.19 0 / 0.35);
+  --rosa-deep: oklch(0.55 0.22 0);
   --chart-1: oklch(0.646 0.222 41.116);
   --chart-2: oklch(0.6 0.118 184.704);
   --chart-3: oklch(0.398 0.07 227.392);
