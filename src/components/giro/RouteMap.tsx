@@ -2,8 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import L from "leaflet";
 import type { Stage } from "@/data/stages";
 import { burgasUmapLayers } from "@/data/burgasUmap";
+import { cityPrograms, tagColor, type CulturalEvent } from "@/data/events";
 import { Button } from "@/components/ui/button";
-import { LocateFixed, Loader2 } from "lucide-react";
+import { LocateFixed, Loader2, Sparkles } from "lucide-react";
 
 type Props = {
   stages: Stage[];
@@ -39,6 +40,48 @@ function infoIcon(color: string) {
     iconSize: [22, 22],
     iconAnchor: [11, 11],
   });
+}
+
+const tagEmoji: Record<NonNullable<CulturalEvent["tag"]>, string> = {
+  "култура": "✦",
+  "спорт": "🚴",
+  "изложба": "🖼",
+  "концерт": "♪",
+  "детско": "★",
+  "церемония": "▲",
+};
+
+function eventIcon(color: string, glyph: string) {
+  return L.divIcon({
+    className: "giro-event-marker",
+    html: `<div style="position:relative;width:28px;height:34px;">
+      <svg width="28" height="34" viewBox="0 0 28 34" style="position:absolute;inset:0;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.35));">
+        <path d="M14 0 C6.27 0 0 6.27 0 14 c0 9 14 20 14 20 s14-11 14-20 C28 6.27 21.73 0 14 0 z" fill="${color}" stroke="#fff" stroke-width="2"/>
+      </svg>
+      <div style="position:absolute;top:3px;left:0;right:0;height:22px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;font-weight:700;font-family:system-ui,sans-serif;line-height:1;">${glyph}</div>
+    </div>`,
+    iconSize: [28, 34],
+    iconAnchor: [14, 34],
+    popupAnchor: [0, -30],
+  });
+}
+
+const WEEKDAYS_BG = ["нед", "пон", "вто", "сря", "чет", "пет", "съб"];
+const MONTHS_BG = ["януари","февруари","март","април","май","юни","юли","август","септември","октомври","ноември","декември"];
+function fmtDate(iso: string) {
+  const d = new Date(iso + "T00:00:00");
+  return `${d.getDate()} ${MONTHS_BG[d.getMonth()]} (${WEEKDAYS_BG[d.getDay()]})`;
+}
+
+function eventPopup(ev: CulturalEvent, cityName: string, color: string) {
+  return `<div style="font-family:system-ui,sans-serif;max-width:280px;">
+    <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:${color};font-weight:800;">${cityName}${ev.tag ? ` · ${ev.tag}` : ""}</div>
+    <div style="font-size:14px;font-weight:700;margin:4px 0 6px;color:#1f1326;line-height:1.25;">${ev.title}</div>
+    <div style="font-size:12px;color:#374151;display:flex;flex-direction:column;gap:3px;">
+      <div>📅 <strong>${fmtDate(ev.date)}</strong>${ev.time ? ` · ${ev.time}` : ""}</div>
+      ${ev.location ? `<div>📍 ${ev.location}</div>` : ""}
+    </div>
+  </div>`;
 }
 
 // Cache OSRM responses in-memory per stage
@@ -129,8 +172,10 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
   const containerRef = useRef<HTMLDivElement | null>(null);
   const layersRef = useRef<L.LayerGroup | null>(null);
   const userLayerRef = useRef<L.LayerGroup | null>(null);
+  const eventsLayerRef = useRef<L.LayerGroup | null>(null);
   const [locating, setLocating] = useState(false);
   const [routingCount, setRoutingCount] = useState(0);
+  const [showEvents, setShowEvents] = useState(true);
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
@@ -147,6 +192,7 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
     mapRef.current = map;
     layersRef.current = L.layerGroup().addTo(map);
     userLayerRef.current = L.layerGroup().addTo(map);
+    eventsLayerRef.current = L.layerGroup().addTo(map);
 
     return () => {
       map.remove();
@@ -247,6 +293,57 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
     };
   }, [stages, activeStageId]);
 
+  // Render cultural / sport event pins
+  useEffect(() => {
+    const layer = eventsLayerRef.current;
+    if (!layer) return;
+    layer.clearLayers();
+    if (!showEvents) return;
+
+    // Group events by coordinate so overlapping pins become one marker with N events
+    const buckets = new Map<string, { lat: number; lng: number; items: { ev: CulturalEvent; cityName: string; color: string }[] }>();
+    for (const city of cityPrograms) {
+      for (const ev of city.events) {
+        if (!ev.coords) continue;
+        const key = `${ev.coords[0].toFixed(4)},${ev.coords[1].toFixed(4)}`;
+        if (!buckets.has(key)) buckets.set(key, { lat: ev.coords[0], lng: ev.coords[1], items: [] });
+        buckets.get(key)!.items.push({
+          ev,
+          cityName: city.name,
+          color: ev.tag ? tagColor[ev.tag] : "#ec4899",
+        });
+      }
+    }
+
+    for (const { lat, lng, items } of buckets.values()) {
+      const primary = items[0];
+      const glyph = primary.ev.tag ? tagEmoji[primary.ev.tag] : "✦";
+      const marker = L.marker([lat, lng], {
+        icon: eventIcon(primary.color, items.length > 1 ? String(items.length) : glyph),
+        zIndexOffset: 500,
+      }).addTo(layer);
+
+      if (items.length === 1) {
+        marker.bindPopup(eventPopup(primary.ev, primary.cityName, primary.color));
+      } else {
+        const sorted = [...items].sort((a, b) =>
+          (a.ev.date + (a.ev.time ?? "")).localeCompare(b.ev.date + (b.ev.time ?? "")),
+        );
+        const html = `<div style="font-family:system-ui,sans-serif;max-width:300px;max-height:300px;overflow-y:auto;">
+          <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:${primary.color};font-weight:800;margin-bottom:6px;">${primary.cityName} · ${items.length} събития</div>
+          ${sorted.map(({ ev, color }) => `
+            <div style="border-top:1px solid #e5e7eb;padding:6px 0;">
+              <div style="font-size:11px;color:${color};font-weight:700;">${fmtDate(ev.date)}${ev.time ? ` · ${ev.time}` : ""}${ev.tag ? ` · ${ev.tag}` : ""}</div>
+              <div style="font-size:13px;font-weight:600;color:#1f1326;line-height:1.25;margin-top:2px;">${ev.title}</div>
+              ${ev.location ? `<div style="font-size:11px;color:#6b7280;margin-top:2px;">📍 ${ev.location}</div>` : ""}
+            </div>
+          `).join("")}
+        </div>`;
+        marker.bindPopup(html);
+      }
+    }
+  }, [showEvents]);
+
   const handleLocate = () => {
     if (!navigator.geolocation || !mapRef.current || !userLayerRef.current) return;
     setLocating(true);
@@ -293,19 +390,36 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
           Изчертаване по реалните пътища…
         </div>
       )}
-      <Button
-        onClick={handleLocate}
-        size="sm"
-        className="absolute top-4 right-4 z-[400] shadow-lg"
-        disabled={locating}
-      >
-        {locating ? (
-          <Loader2 className="h-4 w-4 animate-spin" />
-        ) : (
-          <LocateFixed className="h-4 w-4" />
-        )}
-        <span className="ml-2">Намери ме</span>
-      </Button>
+      <div className="absolute top-4 right-4 z-[400] flex flex-col gap-2 items-end">
+        <Button onClick={handleLocate} size="sm" className="shadow-lg" disabled={locating}>
+          {locating ? <Loader2 className="h-4 w-4 animate-spin" /> : <LocateFixed className="h-4 w-4" />}
+          <span className="ml-2">Намери ме</span>
+        </Button>
+        <Button
+          onClick={() => setShowEvents((v) => !v)}
+          size="sm"
+          variant={showEvents ? "default" : "secondary"}
+          className="shadow-lg"
+        >
+          <Sparkles className="h-4 w-4" />
+          <span className="ml-2">{showEvents ? "Скрий събития" : "Покажи събития"}</span>
+        </Button>
+      </div>
+      {/* Legend */}
+      <div className="absolute bottom-4 left-4 z-[400] rounded-xl bg-background/95 backdrop-blur px-3 py-2 text-[11px] shadow-lg border border-border">
+        <div className="font-bold uppercase tracking-wider text-[10px] mb-1 text-muted-foreground">Събития</div>
+        <div className="flex flex-wrap gap-x-3 gap-y-1">
+          {(Object.keys(tagEmoji) as Array<keyof typeof tagEmoji>).map((t) => (
+            <span key={t} className="inline-flex items-center gap-1">
+              <span
+                className="inline-block h-2.5 w-2.5 rounded-full"
+                style={{ background: tagColor[t] }}
+              />
+              {t}
+            </span>
+          ))}
+        </div>
+      </div>
       <style>{`@keyframes giroPulse{0%{transform:scale(0.6);opacity:0.8}100%{transform:scale(2.2);opacity:0}}`}</style>
     </div>
   );
