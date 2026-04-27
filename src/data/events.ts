@@ -10,6 +10,8 @@ export interface CulturalEvent {
   description?: string;
   /** Optional tag: културно / спортно / изложба / концерт / детско */
   tag?: "култура" | "спорт" | "изложба" | "концерт" | "детско" | "церемония";
+  /** [lat, lng] — optional; if present the event is pinned on the map */
+  coords?: [number, number];
 }
 
 export interface CityProgram {
