@@ -59,6 +59,37 @@ function finishFlagIcon(color: string, stageId: number, city: string, offsetX = 
   });
 }
 
+// Combined marker for the case when one stage's FINISH and the next stage's START
+// are at the exact same physical point (e.g. Stage 1 finish & Stage 2 start in Burgas).
+// Shown as a single pin with two stacked labels so users don't think there are two
+// separate places.
+function combinedFinishStartIcon(
+  finishColor: string,
+  startColor: string,
+  finishStageId: number,
+  startStageId: number,
+  city: string,
+) {
+  return L.divIcon({
+    className: "giro-combined-marker",
+    html: `<div style="position:relative;display:flex;flex-direction:column;align-items:flex-start;font-family:system-ui,sans-serif;pointer-events:auto;">
+      <div style="display:flex;flex-direction:column;gap:2px;">
+        <div style="background:#fff;color:${finishColor};padding:3px 8px;border:2px solid ${finishColor};border-bottom-width:1px;border-radius:6px 6px 2px 2px;font-size:11px;font-weight:800;letter-spacing:0.03em;box-shadow:0 4px 12px rgba(0,0,0,0.3);white-space:nowrap;line-height:1.1;">
+          🏆 ФИНАЛ Е${finishStageId}
+        </div>
+        <div style="background:${startColor};color:#fff;padding:3px 8px;border:2px solid ${startColor};border-top-width:1px;border-radius:2px 2px 6px 6px;font-size:11px;font-weight:800;letter-spacing:0.03em;box-shadow:0 4px 12px rgba(0,0,0,0.4);white-space:nowrap;line-height:1.1;">
+          🏁 СТАРТ Е${startStageId}<span style="opacity:0.9;font-weight:600;margin-left:4px;">· ${city}</span>
+        </div>
+      </div>
+      <div style="width:3px;height:18px;background:${startColor};margin-left:6px;box-shadow:0 2px 4px rgba(0,0,0,0.3);"></div>
+      <div style="width:13px;height:13px;border-radius:9999px;background:#fff;border:3px solid ${startColor};margin-left:-1px;margin-top:-3px;box-shadow:0 2px 6px rgba(0,0,0,0.45);"></div>
+    </div>`,
+    iconSize: [180, 80],
+    iconAnchor: [6, 80],
+    popupAnchor: [0, -78],
+  });
+}
+
 function userIcon() {
   return L.divIcon({
     className: "giro-user-marker",
@@ -326,19 +357,65 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
       stage.waypoints.forEach((wp, i) => {
         const isStart = i === 0;
         const isFinish = i === stage.waypoints.length - 1;
-        const sharedBurgasOffset =
-          isFinish && stage.id === 1 ? -110 : isStart && stage.id === 2 ? 22 : 0;
-        const icon = isStart
-          ? startFlagIcon(stage.color, stage.id, stage.from, sharedBurgasOffset)
-          : isFinish
-            ? finishFlagIcon(stage.color, stage.id, stage.to, sharedBurgasOffset)
-            : makeIcon(stage.color, `${stage.id}`, sharedBurgasOffset);
+
+        // Detect "shared point" case: this stage's finish == next stage's start
+        // (or this stage's start == previous stage's finish). When both stages
+        // are visible we render a SINGLE combined marker instead of two pins
+        // sitting on top of each other.
+        const COORD_EPS = 0.0005;
+        const sameCoords = (a: [number, number], b: [number, number]) =>
+          Math.abs(a[0] - b[0]) < COORD_EPS && Math.abs(a[1] - b[1]) < COORD_EPS;
+
+        const nextStage = stages.find((s) => s.id === stage.id + 1);
+        const prevStage = stages.find((s) => s.id === stage.id - 1);
+        const nextStageVisible = nextStage && (activeStageId === 0 || activeStageId === nextStage.id);
+        const prevStageVisible = prevStage && (activeStageId === 0 || activeStageId === prevStage.id);
+
+        const isSharedFinish =
+          isFinish &&
+          nextStage &&
+          nextStageVisible &&
+          nextStage.waypoints.length > 0 &&
+          sameCoords(wp.coords as [number, number], nextStage.waypoints[0].coords as [number, number]);
+
+        const isSharedStartSkip =
+          isStart &&
+          prevStage &&
+          prevStageVisible &&
+          prevStage.waypoints.length > 0 &&
+          sameCoords(
+            wp.coords as [number, number],
+            prevStage.waypoints[prevStage.waypoints.length - 1].coords as [number, number],
+          );
+
+        // Skip the duplicate start marker — the combined marker on the previous
+        // stage's finish already represents this point.
+        if (isSharedStartSkip) return;
+
+        const icon = isSharedFinish
+          ? combinedFinishStartIcon(stage.color, nextStage!.color, stage.id, nextStage!.id, stage.to)
+          : isStart
+            ? startFlagIcon(stage.color, stage.id, stage.from)
+            : isFinish
+              ? finishFlagIcon(stage.color, stage.id, stage.to)
+              : makeIcon(stage.color, `${stage.id}`);
         const marker = L.marker(wp.coords as L.LatLngExpression, {
           icon,
-          zIndexOffset: isStart ? 1000 : isFinish ? 900 : 0,
+          zIndexOffset: isSharedFinish ? 1100 : isStart ? 1000 : isFinish ? 900 : 0,
         }).addTo(layers);
 
-        marker.bindPopup(`
+        const popupHtml = isSharedFinish
+          ? `
+          <div style="font-family:system-ui,sans-serif;min-width:220px;">
+            <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.05em;color:${stage.color};font-weight:700;">🏆 Финал Етап ${stage.id} · ${stage.to}</div>
+            <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.05em;color:${nextStage!.color};font-weight:700;margin-top:2px;">🏁 Старт Етап ${nextStage!.id} · ${nextStage!.from}</div>
+            <div style="font-size:13px;color:#374151;margin-top:8px;line-height:1.35;">Една и съща точка — финалът на етап ${stage.id} и стартът на етап ${nextStage!.id} са на едно и също място.</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:8px;font-size:12px;">
+              <div style="color:${stage.color};"><strong>Финал Е${stage.id}:</strong><br/>${wp.raceTime}</div>
+              <div style="color:${nextStage!.color};"><strong>Старт Е${nextStage!.id}:</strong><br/>${nextStage!.waypoints[0].raceTime}</div>
+            </div>
+          </div>`
+          : `
           <div style="font-family:system-ui,sans-serif;min-width:200px;">
             <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.05em;color:${stage.color};font-weight:700;">${stage.name} · ${stage.from} → ${stage.to}</div>
             <div style="font-size:15px;font-weight:700;margin:4px 0;color:#1f1326;">${wp.name}</div>
@@ -349,8 +426,8 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
               <div style="color:${stage.color};"><strong>Преминаване:</strong><br/>${wp.raceTime}</div>
               <div style="color:#dc2626;"><strong>Затваряне:</strong><br/>${wp.closeTime}</div>
             </div>
-          </div>
-        `);
+          </div>`;
+        marker.bindPopup(popupHtml);
       });
     });
 
