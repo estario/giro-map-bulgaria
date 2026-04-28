@@ -181,13 +181,36 @@ function featurePopup(properties: Record<string, unknown>) {
   return `<div style="font-family:system-ui,sans-serif;max-width:260px;"><strong>${name}</strong>${body ? `<div style="margin-top:6px;font-size:12px;color:#4b5563;">${body}</div>` : ""}</div>`;
 }
 
-function addBurgasReferenceLayers(map: L.Map, layers: L.LayerGroup) {
+function addBurgasReferenceLayers(map: L.Map, layers: L.LayerGroup, activeStageId: number) {
   if (!map.getPane("burgas-detail")) {
     map.createPane("burgas-detail");
     map.getPane("burgas-detail")!.style.zIndex = "450";
   }
 
-  L.geoJSON(burgasUmapLayers.raceStages as never, {
+  // Filter race-stage features by the currently selected stage so that e.g.
+  // when the user views ONLY Stage 1, the Stage 2 starting line (Burgas →
+  // Vetren) is not drawn on the map.
+  const stageMatches = (rawName: string): boolean => {
+    if (activeStageId === 0) return true;
+    const n = rawName.toLowerCase();
+    const isStage1 = n.includes("етап 1") || n.includes("stage 1");
+    const isStage2 = n.includes("етап 2") || n.includes("stage 2");
+    const isStage3 = n.includes("етап 3") || n.includes("stage 3");
+    // Generic features (no stage marker) are kept for all views.
+    if (!isStage1 && !isStage2 && !isStage3) return true;
+    if (activeStageId === 1) return isStage1;
+    if (activeStageId === 2) return isStage2;
+    if (activeStageId === 3) return isStage3;
+    return true;
+  };
+
+  const filteredRaceStages = {
+    ...burgasUmapLayers.raceStages,
+    features: (burgasUmapLayers.raceStages as { features: Array<{ properties?: { name?: string } }> })
+      .features.filter((f) => stageMatches(String(f?.properties?.name ?? ""))),
+  };
+
+  L.geoJSON(filteredRaceStages as never, {
     pane: "burgas-detail",
     style: (feature) => {
       const props = (feature?.properties ?? {}) as Record<string, string>;
@@ -300,7 +323,7 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
     let cancelled = false;
 
     if (activeStageId === 0 || activeStageId === 1 || activeStageId === 2) {
-      addBurgasReferenceLayers(map, layers);
+    addBurgasReferenceLayers(map, layers, activeStageId);
       allLatLngs.push([42.4939, 27.477], [42.6587, 27.7307]);
     }
 
