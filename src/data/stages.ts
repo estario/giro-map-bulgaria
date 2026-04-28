@@ -40,8 +40,8 @@ export const stages: Stage[] = [
     distanceKm: 147,
     color: "#ec4899",
     waypoints: [
-      { name: "НЕСЕБЪР старт", totalKm: 0, toFinishKm: 147, raceTime: "13:50", closeTime: "12:20", coords: [42.6586, 27.7286] },
-      { name: "Несебър км0", totalKm: 0, toFinishKm: 147, raceTime: "14:00", closeTime: "12:30", coords: [42.500755, 27.477949] },
+      { name: "НЕСЕБЪР старт", totalKm: 0, toFinishKm: 147, raceTime: "13:50", closeTime: "12:20", coords: [42.658712, 27.730648] },
+      { name: "Несебър км0", totalKm: 0, toFinishKm: 147, raceTime: "14:00", closeTime: "12:30", coords: [42.658712, 27.730648] },
       { name: "Равда", road: "I-9", totalKm: 7.8, toFinishKm: 139.2, raceTime: "14:09", closeTime: "12:39", coords: [42.6403, 27.6747] },
       { name: "Ахелой", road: "I-9", totalKm: 11.5, toFinishKm: 135.5, raceTime: "14:14", closeTime: "12:44", coords: [42.6433, 27.6378] },
       { name: "Поморие", road: "I-9", totalKm: 19.2, toFinishKm: 127.8, raceTime: "14:23", closeTime: "12:53", coords: [42.5614, 27.6306] },
