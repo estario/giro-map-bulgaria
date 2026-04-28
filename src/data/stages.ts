@@ -63,7 +63,7 @@ export const stages: Stage[] = [
       { name: "Черноморец (връщане)", road: "II-99", totalKm: 120.5, toFinishKm: 26.5, raceTime: "16:32", closeTime: "15:02", coords: [42.4467, 27.6386] },
       { name: "Росен (връщане)", road: "II-99", totalKm: 129.0, toFinishKm: 18.0, raceTime: "16:42", closeTime: "15:12", coords: [42.3414, 27.5306] },
       { name: "Бургас вход", totalKm: 143.4, toFinishKm: 3.6, raceTime: "16:59", closeTime: "15:29", coords: [42.4900, 27.4700] },
-      { name: "БУРГАС финал", totalKm: 147, toFinishKm: 0, raceTime: "17:04", closeTime: "15:34", coords: [42.5048, 27.4626] },
+      { name: "БУРГАС финал", totalKm: 147, toFinishKm: 0, raceTime: "17:04", closeTime: "15:34", coords: [42.495601, 27.471027] },
     ],
     closures: [
       {
@@ -136,7 +136,7 @@ export const stages: Stage[] = [
     color: "#db2777",
     waypoints: [
       { name: "БУРГАС старт", totalKm: 0, toFinishKm: 221, raceTime: "11:55", closeTime: "10:25", coords: [42.5048, 27.4626] },
-      { name: "Бургас км0", totalKm: 0, toFinishKm: 221, raceTime: "12:05", closeTime: "10:35", coords: [42.55456, 27.42853] },
+      { name: "Бургас км0", totalKm: 0, toFinishKm: 221, raceTime: "12:05", closeTime: "10:35", coords: [42.495601, 27.471027] },
       { name: "A1 / Път I-6", road: "I-6", totalKm: 4.3, toFinishKm: 216.7, raceTime: "12:10", closeTime: "10:40", coords: [42.59068, 27.39690] },
       { name: "Садиево", road: "I-6", totalKm: 14.4, toFinishKm: 206.6, raceTime: "12:23", closeTime: "10:53", coords: [42.656266, 27.317404] },
       { name: "Айтос", road: "I-6", totalKm: 21.9, toFinishKm: 199.1, raceTime: "12:32", closeTime: "11:02", coords: [42.69876, 27.249448] },
