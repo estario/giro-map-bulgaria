@@ -326,7 +326,8 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
       stage.waypoints.forEach((wp, i) => {
         const isStart = i === 0;
         const isFinish = i === stage.waypoints.length - 1;
-        const sharedBurgasOffset = isFinish && stage.id === 1 ? -110 : isStart && stage.id === 2 ? 22 : 0;
+        const sharedBurgasOffset =
+          isFinish && stage.id === 1 ? -110 : isStart && stage.id === 2 ? 22 : 0;
         const icon = isStart
           ? startFlagIcon(stage.color, stage.id, stage.from, sharedBurgasOffset)
           : isFinish
