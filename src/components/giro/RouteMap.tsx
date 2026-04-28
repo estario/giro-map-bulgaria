@@ -22,6 +22,43 @@ function makeIcon(color: string, label: string) {
   });
 }
 
+// Distinct flag-style marker for stage START — clearly readable on the map
+// so two stages whose start/finish are close (e.g. Stage 1 finish in Burgas
+// and Stage 2 start in Burgas) cannot be confused.
+function startFlagIcon(color: string, stageId: number, city: string) {
+  const label = `СТАРТ Е${stageId}`;
+  return L.divIcon({
+    className: "giro-start-marker",
+    html: `<div style="position:relative;display:flex;flex-direction:column;align-items:flex-start;font-family:system-ui,sans-serif;pointer-events:auto;">
+      <div style="background:${color};color:#fff;padding:4px 8px 4px 9px;border:2px solid #fff;border-radius:6px;font-size:11px;font-weight:800;letter-spacing:0.04em;box-shadow:0 4px 12px rgba(0,0,0,0.45);white-space:nowrap;line-height:1.1;">
+        🏁 ${label}<span style="opacity:0.85;font-weight:600;margin-left:4px;">· ${city}</span>
+      </div>
+      <div style="width:3px;height:18px;background:${color};margin-left:6px;box-shadow:0 2px 4px rgba(0,0,0,0.35);"></div>
+      <div style="width:12px;height:12px;border-radius:9999px;background:${color};border:2px solid #fff;margin-left:0px;margin-top:-3px;box-shadow:0 2px 6px rgba(0,0,0,0.4);"></div>
+    </div>`,
+    iconSize: [120, 50],
+    iconAnchor: [6, 50],
+    popupAnchor: [0, -48],
+  });
+}
+
+function finishFlagIcon(color: string, stageId: number, city: string) {
+  const label = `ФИНАЛ Е${stageId}`;
+  return L.divIcon({
+    className: "giro-finish-marker",
+    html: `<div style="position:relative;display:flex;flex-direction:column;align-items:flex-start;font-family:system-ui,sans-serif;pointer-events:auto;">
+      <div style="background:#fff;color:${color};padding:4px 8px;border:2px solid ${color};border-radius:6px;font-size:11px;font-weight:800;letter-spacing:0.04em;box-shadow:0 4px 12px rgba(0,0,0,0.35);white-space:nowrap;line-height:1.1;">
+        🏆 ${label}<span style="opacity:0.85;font-weight:600;margin-left:4px;color:#1f1326;">· ${city}</span>
+      </div>
+      <div style="width:3px;height:18px;background:${color};margin-left:6px;"></div>
+      <div style="width:12px;height:12px;border-radius:9999px;background:#fff;border:2px solid ${color};margin-left:0px;margin-top:-3px;"></div>
+    </div>`,
+    iconSize: [120, 50],
+    iconAnchor: [6, 50],
+    popupAnchor: [0, -48],
+  });
+}
+
 function userIcon() {
   return L.divIcon({
     className: "giro-user-marker",
@@ -289,9 +326,14 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
       stage.waypoints.forEach((wp, i) => {
         const isStart = i === 0;
         const isFinish = i === stage.waypoints.length - 1;
-        const label = isStart ? "S" : isFinish ? "F" : `${stage.id}`;
+        const icon = isStart
+          ? startFlagIcon(stage.color, stage.id, stage.from)
+          : isFinish
+            ? finishFlagIcon(stage.color, stage.id, stage.to)
+            : makeIcon(stage.color, `${stage.id}`);
         const marker = L.marker(wp.coords as L.LatLngExpression, {
-          icon: makeIcon(stage.color, label),
+          icon,
+          zIndexOffset: isStart ? 1000 : isFinish ? 900 : 0,
         }).addTo(layers);
 
         marker.bindPopup(`
