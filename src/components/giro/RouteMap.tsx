@@ -292,6 +292,7 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
   const [routingCount, setRoutingCount] = useState(0);
   const [showEvents, setShowEvents] = useState(true);
   const [showOfficial, setShowOfficial] = useState(true);
+  const { t } = useT();
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
