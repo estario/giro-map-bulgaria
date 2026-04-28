@@ -4,16 +4,11 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Calendar, Clock, MapPin, Sparkles } from "lucide-react";
+import { useT } from "@/i18n/LanguageProvider";
 
-const WEEKDAYS_BG = ["нед", "пон", "вто", "сря", "чет", "пет", "съб"];
-const MONTHS_BG = [
-  "януари", "февруари", "март", "април", "май", "юни",
-  "юли", "август", "септември", "октомври", "ноември", "декември",
-];
-
-function formatDate(iso: string) {
+function formatDate(iso: string, weekdays: string[], months: string[]) {
   const d = new Date(iso + "T00:00:00");
-  return `${d.getDate()} ${MONTHS_BG[d.getMonth()]} · ${WEEKDAYS_BG[d.getDay()]}`;
+  return `${d.getDate()} ${months[d.getMonth()]} · ${weekdays[d.getDay()]}`;
 }
 
 function timeKey(t?: string) {
@@ -37,6 +32,7 @@ function groupByDate(events: CulturalEvent[]) {
 
 export default function CulturalProgram() {
   const [city, setCity] = useState<CityKey>("nesebar");
+  const { t } = useT();
   const program = cityPrograms.find((c) => c.key === city)!;
   const grouped = useMemo(() => groupByDate(program.events), [program]);
 
@@ -48,13 +44,13 @@ export default function CulturalProgram() {
         <div>
           <div className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] font-bold" style={{ color: "var(--rosa-deep)" }}>
             <Sparkles className="h-3.5 w-3.5" />
-            Културна и спортна програма
+            {t.cultProgramKicker}
           </div>
           <h2 className="mt-2 text-3xl font-bold tracking-tight text-balance">
-            Какво се случва в градовете домакини
+            {t.cultProgramTitle}
           </h2>
           <p className="text-muted-foreground mt-1">
-            {totalEvents} събития в 5 града — концерти, изложби, велопаради, церемонии и детски активности.
+            {t.cultProgramSubtitle(totalEvents)}
           </p>
         </div>
       </div>
@@ -84,6 +80,7 @@ export default function CulturalProgram() {
 }
 
 function DayBlock({ date, events }: { date: string; events: CulturalEvent[] }) {
+  const { t } = useT();
   return (
     <div>
       <div className="flex items-center gap-3 mb-3">
@@ -92,10 +89,10 @@ function DayBlock({ date, events }: { date: string; events: CulturalEvent[] }) {
           style={{ background: "var(--gradient-rosa)" }}
         >
           <Calendar className="h-4 w-4" />
-          {formatDate(date)}
+          {formatDate(date, t.weekdays, t.months)}
         </div>
         <div className="h-px flex-1 bg-border" />
-        <span className="text-xs text-muted-foreground tabular-nums">{events.length} събития</span>
+        <span className="text-xs text-muted-foreground tabular-nums">{events.length} {t.eventsLabel}</span>
       </div>
       <div className="grid md:grid-cols-2 gap-3">
         {events.map((e, i) => (
