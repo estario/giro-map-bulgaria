@@ -3,6 +3,7 @@ import { stages } from "@/data/stages";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { MapPin, Clock, AlertTriangle, Navigation } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { useT } from "@/i18n/LanguageProvider";
 
 type Props = {
   userLocation: { lat: number; lng: number } | null;
@@ -22,6 +23,7 @@ function distanceKm(a: { lat: number; lng: number }, b: { lat: number; lng: numb
 }
 
 export default function NearMePanel({ userLocation }: Props) {
+  const { t } = useT();
   const nearby = useMemo(() => {
     if (!userLocation) return [];
     const items = stages.flatMap((stage) =>
@@ -39,10 +41,9 @@ export default function NearMePanel({ userLocation }: Props) {
       <Card className="rounded-2xl border-dashed">
         <CardContent className="py-10 text-center">
           <Navigation className="h-10 w-10 mx-auto text-muted-foreground mb-3" />
-          <p className="font-semibold">Виж кои затваряния са близо до теб</p>
+          <p className="font-semibold">{t.findMeHintTitle}</p>
           <p className="text-sm text-muted-foreground mt-1">
-            Натисни <strong>„Намери ме“</strong> в горния десен ъгъл на картата, за да
-            покажем най-близките точки от маршрута и часовете на затваряне.
+            {t.findMeHint}
           </p>
         </CardContent>
       </Card>
@@ -57,10 +58,10 @@ export default function NearMePanel({ userLocation }: Props) {
       <CardHeader>
         <CardTitle className="text-2xl flex items-center gap-2">
           <Navigation className="h-5 w-5 text-primary" />
-          Около теб
+          {t.nearYou}
         </CardTitle>
         <p className="text-sm text-muted-foreground">
-          Твоята позиция: {userLocation.lat.toFixed(4)}, {userLocation.lng.toFixed(4)}
+          {t.yourPositionLabel} {userLocation.lat.toFixed(4)}, {userLocation.lng.toFixed(4)}
         </p>
       </CardHeader>
       <CardContent>
@@ -69,11 +70,11 @@ export default function NearMePanel({ userLocation }: Props) {
             <div className="flex items-start gap-3">
               <AlertTriangle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
               <div>
-                <p className="font-bold text-destructive">Ти си близо до маршрута!</p>
+                <p className="font-bold text-destructive">{t.nearRouteAlert}</p>
                 <p className="text-sm mt-1">
-                  Най-близка точка: <strong>{closest.wp.name}</strong> ({closest.dist.toFixed(1)} км).
-                  Затваря се в <strong className="text-destructive">{closest.wp.closeTime}</strong>,
-                  колоната преминава в{" "}
+                  {t.closestPoint} <strong>{closest.wp.name}</strong> ({closest.dist.toFixed(1)} {t.kmShort}).
+                  {" "}{t.closesAt} <strong className="text-destructive">{closest.wp.closeTime}</strong>,
+                  {" "}{t.passesAt}{" "}
                   <strong style={{ color: closest.stage.color }}>{closest.wp.raceTime}</strong>.
                 </p>
               </div>
@@ -94,14 +95,14 @@ export default function NearMePanel({ userLocation }: Props) {
                     className="text-[10px] px-1.5 py-0 font-bold"
                     style={{ borderColor: stage.color, color: stage.color }}
                   >
-                    {stage.name}
+                    {t.stageN(stage.id)}
                   </Badge>
                   <span className="font-semibold truncate">{wp.name}</span>
                 </div>
                 <div className="flex items-center gap-3 text-xs text-muted-foreground mt-1 tabular-nums">
                   <span className="inline-flex items-center gap-1">
                     <MapPin className="h-3 w-3" />
-                    {dist < 1 ? `${(dist * 1000).toFixed(0)} м` : `${dist.toFixed(1)} км`}
+                    {dist < 1 ? `${(dist * 1000).toFixed(0)} ${t.metres}` : `${dist.toFixed(1)} ${t.kmShort}`}
                   </span>
                   <span className="inline-flex items-center gap-1" style={{ color: stage.color }}>
                     <Clock className="h-3 w-3" />
@@ -117,7 +118,7 @@ export default function NearMePanel({ userLocation }: Props) {
           ))}
         </div>
         <p className="text-xs text-muted-foreground mt-4">
-          Разстоянията са по права линия. Часовете са според официалния график на етапа.
+          {t.distancesNote}
         </p>
       </CardContent>
     </Card>
