@@ -136,7 +136,7 @@ export const stages: Stage[] = [
     color: "#db2777",
     waypoints: [
       { name: "БУРГАС старт", totalKm: 0, toFinishKm: 221, raceTime: "11:55", closeTime: "10:25", coords: [42.5048, 27.4626] },
-      { name: "Бургас км0", totalKm: 0, toFinishKm: 221, raceTime: "12:05", closeTime: "10:35", coords: [42.495601, 27.471027] },
+      { name: "Бургас км0", totalKm: 0, toFinishKm: 221, raceTime: "12:05", closeTime: "10:35", coords: [42.493600, 27.471700] },
       { name: "A1 / Път I-6", road: "I-6", totalKm: 4.3, toFinishKm: 216.7, raceTime: "12:10", closeTime: "10:40", coords: [42.59068, 27.39690] },
       { name: "Садиево", road: "I-6", totalKm: 14.4, toFinishKm: 206.6, raceTime: "12:23", closeTime: "10:53", coords: [42.656266, 27.317404] },
       { name: "Айтос", road: "I-6", totalKm: 21.9, toFinishKm: 199.1, raceTime: "12:32", closeTime: "11:02", coords: [42.69876, 27.249448] },
