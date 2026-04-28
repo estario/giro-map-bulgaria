@@ -326,9 +326,14 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
       stage.waypoints.forEach((wp, i) => {
         const isStart = i === 0;
         const isFinish = i === stage.waypoints.length - 1;
-        const label = isStart ? "S" : isFinish ? "F" : `${stage.id}`;
+        const icon = isStart
+          ? startFlagIcon(stage.color, stage.id, stage.from)
+          : isFinish
+            ? finishFlagIcon(stage.color, stage.id, stage.to)
+            : makeIcon(stage.color, `${stage.id}`);
         const marker = L.marker(wp.coords as L.LatLngExpression, {
-          icon: makeIcon(stage.color, label),
+          icon,
+          zIndexOffset: isStart ? 1000 : isFinish ? 900 : 0,
         }).addTo(layers);
 
         marker.bindPopup(`
