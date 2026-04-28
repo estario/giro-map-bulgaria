@@ -59,6 +59,37 @@ function finishFlagIcon(color: string, stageId: number, city: string, offsetX = 
   });
 }
 
+// Combined marker for the case when one stage's FINISH and the next stage's START
+// are at the exact same physical point (e.g. Stage 1 finish & Stage 2 start in Burgas).
+// Shown as a single pin with two stacked labels so users don't think there are two
+// separate places.
+function combinedFinishStartIcon(
+  finishColor: string,
+  startColor: string,
+  finishStageId: number,
+  startStageId: number,
+  city: string,
+) {
+  return L.divIcon({
+    className: "giro-combined-marker",
+    html: `<div style="position:relative;display:flex;flex-direction:column;align-items:flex-start;font-family:system-ui,sans-serif;pointer-events:auto;">
+      <div style="display:flex;flex-direction:column;gap:2px;">
+        <div style="background:#fff;color:${finishColor};padding:3px 8px;border:2px solid ${finishColor};border-bottom-width:1px;border-radius:6px 6px 2px 2px;font-size:11px;font-weight:800;letter-spacing:0.03em;box-shadow:0 4px 12px rgba(0,0,0,0.3);white-space:nowrap;line-height:1.1;">
+          🏆 ФИНАЛ Е${finishStageId}
+        </div>
+        <div style="background:${startColor};color:#fff;padding:3px 8px;border:2px solid ${startColor};border-top-width:1px;border-radius:2px 2px 6px 6px;font-size:11px;font-weight:800;letter-spacing:0.03em;box-shadow:0 4px 12px rgba(0,0,0,0.4);white-space:nowrap;line-height:1.1;">
+          🏁 СТАРТ Е${startStageId}<span style="opacity:0.9;font-weight:600;margin-left:4px;">· ${city}</span>
+        </div>
+      </div>
+      <div style="width:3px;height:18px;background:${startColor};margin-left:6px;box-shadow:0 2px 4px rgba(0,0,0,0.3);"></div>
+      <div style="width:13px;height:13px;border-radius:9999px;background:#fff;border:3px solid ${startColor};margin-left:-1px;margin-top:-3px;box-shadow:0 2px 6px rgba(0,0,0,0.45);"></div>
+    </div>`,
+    iconSize: [180, 80],
+    iconAnchor: [6, 80],
+    popupAnchor: [0, -78],
+  });
+}
+
 function userIcon() {
   return L.divIcon({
     className: "giro-user-marker",
