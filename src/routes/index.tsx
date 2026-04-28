@@ -167,6 +167,7 @@ function Stat({ icon, label }: { icon: React.ReactNode; label: string }) {
 
 function StageSummaryCard({ stageId, onSelect }: { stageId: number; onSelect: () => void }) {
   const stage = stages.find((s) => s.id === stageId)!;
+  const { t } = useT();
   return (
     <button
       onClick={onSelect}
@@ -177,14 +178,14 @@ function StageSummaryCard({ stageId, onSelect }: { stageId: number; onSelect: ()
         style={{ color: stage.color }}
       >
         <span className="h-2 w-2 rounded-full" style={{ background: stage.color }} />
-        {stage.name} · {stage.date}
+        {t.stageN(stage.id)} · {stage.date}
       </div>
       <h3 className="mt-2 text-xl font-bold">
         {stage.from} → {stage.to}
       </h3>
       <div className="mt-3 flex items-center gap-4 text-sm text-muted-foreground tabular-nums">
         <span className="inline-flex items-center gap-1">
-          <RouteIcon className="h-4 w-4" /> {stage.distanceKm} км
+          <RouteIcon className="h-4 w-4" /> {stage.distanceKm} {t.kmShort}
         </span>
         <span className="inline-flex items-center gap-1">
           <Clock className="h-4 w-4" /> {stage.waypoints[0].raceTime} – {stage.waypoints.at(-1)!.raceTime}
@@ -196,6 +197,7 @@ function StageSummaryCard({ stageId, onSelect }: { stageId: number; onSelect: ()
 
 function StageDetail({ stageId }: { stageId: number }) {
   const stage = stages.find((s) => s.id === stageId)!;
+  const { t } = useT();
   return (
     <div className="grid lg:grid-cols-2 gap-6">
       {/* Schedule */}
@@ -207,7 +209,7 @@ function StageDetail({ stageId }: { stageId: number }) {
                 {stage.from} → {stage.to}
               </CardTitle>
               <p className="text-sm text-muted-foreground mt-1">
-                {stage.date} · {stage.distanceKm} км · {stage.name}
+                {stage.date} · {stage.distanceKm} {t.kmShort} · {t.stageN(stage.id)}
               </p>
             </div>
             <Badge style={{ background: stage.color, color: "white" }}>Maglia rosa</Badge>
@@ -216,18 +218,18 @@ function StageDetail({ stageId }: { stageId: number }) {
         <CardContent>
           <h4 className="font-semibold mb-3 flex items-center gap-2">
             <Clock className="h-4 w-4" style={{ color: stage.color }} />
-            График за преминаване
+            {t.schedule}
           </h4>
           <div className="overflow-hidden rounded-lg border border-border">
             <table className="w-full text-sm tabular-nums">
               <thead className="bg-secondary text-secondary-foreground">
                 <tr>
-                  <th className="text-left p-2 font-semibold">Място</th>
-                  <th className="text-right p-2 font-semibold">км</th>
+                  <th className="text-left p-2 font-semibold">{t.place}</th>
+                  <th className="text-right p-2 font-semibold">{t.km}</th>
                   <th className="text-right p-2 font-semibold" style={{ color: stage.color }}>
-                    Преминаване
+                    {t.passing}
                   </th>
-                  <th className="text-right p-2 font-semibold text-destructive">Затваряне</th>
+                  <th className="text-right p-2 font-semibold text-destructive">{t.closure}</th>
                 </tr>
               </thead>
               <tbody>
@@ -252,10 +254,10 @@ function StageDetail({ stageId }: { stageId: number }) {
         <CardHeader>
           <CardTitle className="text-2xl flex items-center gap-2">
             <AlertTriangle className="h-5 w-5 text-destructive" />
-            Затворени улици
+            {t.closedStreets}
           </CardTitle>
           <p className="text-sm text-muted-foreground">
-            Подробен график по град и времеви интервал.
+            {t.closedStreetsSub}
           </p>
         </CardHeader>
         <CardContent>
