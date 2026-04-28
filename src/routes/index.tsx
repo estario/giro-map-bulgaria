@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { MapPin, Clock, Route as RouteIcon, AlertTriangle, Calendar } from "lucide-react";
+import { LanguageSwitcher, useT } from "@/i18n/LanguageProvider";
 
 const RouteMap = lazy(() => import("@/components/giro/RouteMap"));
 const NearMePanel = lazy(() => import("@/components/giro/NearMePanel"));
@@ -30,6 +31,7 @@ function Index() {
   const activeId = parseInt(activeStage, 10);
   const totalKm = stages.reduce((s, st) => s + st.distanceKm, 0);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const { t } = useT();
 
   return (
     <div className="min-h-screen bg-background antialiased">
@@ -50,23 +52,24 @@ function Index() {
           }}
         />
         <div className="relative mx-auto max-w-6xl px-6 py-16 md:py-24 text-primary-foreground">
+          <div className="absolute top-4 right-6 z-10">
+            <LanguageSwitcher />
+          </div>
           <div className="flex flex-wrap items-center gap-2 text-xs uppercase tracking-[0.2em] opacity-90">
-            <span>Grande Partenza</span>
+            <span>{t.grandePartenza}</span>
             <span>·</span>
-            <span>България 2026</span>
+            <span>{t.bulgaria2026}</span>
           </div>
           <h1 className="mt-4 text-balance text-5xl md:text-7xl font-black leading-[0.95]">
-            Giro d'Italia 2026
+            {t.heroTitle}
           </h1>
           <p className="mt-4 max-w-2xl text-pretty text-lg md:text-xl opacity-95">
-            Първите три етапа на легендарната Обиколка на Италия преминават през България —
-            8, 9 и 10 май 2026 г. Виж маршрута на картата и часовете, в които улиците ще
-            бъдат затворени за движение.
+            {t.heroSubtitle}
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <Stat icon={<RouteIcon className="h-4 w-4" />} label={`${totalKm} км общо`} />
-            <Stat icon={<Calendar className="h-4 w-4" />} label="8 – 10 май 2026" />
-            <Stat icon={<MapPin className="h-4 w-4" />} label="3 етапа · 5 града" />
+            <Stat icon={<RouteIcon className="h-4 w-4" />} label={t.totalKm(totalKm)} />
+            <Stat icon={<Calendar className="h-4 w-4" />} label={t.dates} />
+            <Stat icon={<MapPin className="h-4 w-4" />} label={t.stagesCities} />
           </div>
         </div>
       </header>
@@ -76,19 +79,19 @@ function Index() {
         <section>
           <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-4 mb-6">
             <div>
-              <h2 className="text-3xl font-bold tracking-tight text-balance">Маршрут на картата</h2>
+              <h2 className="text-3xl font-bold tracking-tight text-balance">{t.mapHeading}</h2>
               <p className="text-muted-foreground mt-1">
-                Бургас е нанесен с детайлните uMap слоеве от референцията; останалите етапи се чертаят по OSRM.
+                {t.mapSubtitle}
               </p>
             </div>
           </div>
 
           <Tabs value={activeStage} onValueChange={setActiveStage} className="w-full">
             <TabsList className="grid w-full grid-cols-2 md:grid-cols-4 h-auto p-1">
-              <TabsTrigger value="0" className="py-2.5">Всички етапи</TabsTrigger>
+              <TabsTrigger value="0" className="py-2.5">{t.allStages}</TabsTrigger>
               {stages.map((s) => (
                 <TabsTrigger key={s.id} value={String(s.id)} className="py-2.5">
-                  Етап {s.id}
+                  {t.stageN(s.id)}
                 </TabsTrigger>
               ))}
             </TabsList>
@@ -136,16 +139,14 @@ function Index() {
         {/* Footer note */}
         <footer className="border-t border-border pt-6 pb-10 text-sm text-muted-foreground">
           <p>
-            Данните са според официалните графици за затваряне на улици и графиците за преминаване
-            на състезанието. Координатите на маршрута са приблизителни (по населени места). За
-            пълна детайлна карта виж и{" "}
+            {t.footerText}{" "}
             <a
               href="https://umap.openstreetmap.fr/bg/map/giro-ditalia-2026-grande-partenza-burgas_1380795"
               className="text-primary underline underline-offset-2"
               target="_blank"
               rel="noreferrer"
             >
-              uMap за Бургас
+              {t.burgasUmap}
             </a>
             .
           </p>
