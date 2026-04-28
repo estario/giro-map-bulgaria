@@ -6,6 +6,7 @@ import { cityPrograms, tagColor, type CulturalEvent } from "@/data/events";
 import { GIRO_STAGES, type GiroPoint } from "@/data/giroStages";
 import { Button } from "@/components/ui/button";
 import { LocateFixed, Loader2, Sparkles } from "lucide-react";
+import { useT } from "@/i18n/LanguageProvider";
 
 type Props = {
   stages: Stage[];
