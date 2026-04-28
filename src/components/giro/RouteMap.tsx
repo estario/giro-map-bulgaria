@@ -13,10 +13,10 @@ type Props = {
   onUserLocation?: (loc: { lat: number; lng: number } | null) => void;
 };
 
-function makeIcon(color: string, label: string) {
+function makeIcon(color: string, label: string, offsetX = 0) {
   return L.divIcon({
     className: "giro-marker",
-    html: `<div style="background:${color};color:#fff;border:2px solid #fff;border-radius:9999px;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;box-shadow:0 4px 12px rgba(236,72,153,0.5);font-family:system-ui,sans-serif;">${label}</div>`,
+    html: `<div style="transform:translateX(${offsetX}px);background:${color};color:#fff;border:2px solid #fff;border-radius:9999px;width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;box-shadow:0 4px 12px rgba(236,72,153,0.5);font-family:system-ui,sans-serif;">${label}</div>`,
     iconSize: [26, 26],
     iconAnchor: [13, 13],
   });
@@ -25,11 +25,11 @@ function makeIcon(color: string, label: string) {
 // Distinct flag-style marker for stage START — clearly readable on the map
 // so two stages whose start/finish are close (e.g. Stage 1 finish in Burgas
 // and Stage 2 start in Burgas) cannot be confused.
-function startFlagIcon(color: string, stageId: number, city: string) {
+function startFlagIcon(color: string, stageId: number, city: string, offsetX = 0) {
   const label = `СТАРТ Е${stageId}`;
   return L.divIcon({
     className: "giro-start-marker",
-    html: `<div style="position:relative;display:flex;flex-direction:column;align-items:flex-start;font-family:system-ui,sans-serif;pointer-events:auto;">
+    html: `<div style="position:relative;display:flex;flex-direction:column;align-items:flex-start;font-family:system-ui,sans-serif;pointer-events:auto;transform:translateX(${offsetX}px);">
       <div style="background:${color};color:#fff;padding:4px 8px 4px 9px;border:2px solid #fff;border-radius:6px;font-size:11px;font-weight:800;letter-spacing:0.04em;box-shadow:0 4px 12px rgba(0,0,0,0.45);white-space:nowrap;line-height:1.1;">
         🏁 ${label}<span style="opacity:0.85;font-weight:600;margin-left:4px;">· ${city}</span>
       </div>
@@ -42,11 +42,11 @@ function startFlagIcon(color: string, stageId: number, city: string) {
   });
 }
 
-function finishFlagIcon(color: string, stageId: number, city: string) {
+function finishFlagIcon(color: string, stageId: number, city: string, offsetX = 0) {
   const label = `ФИНАЛ Е${stageId}`;
   return L.divIcon({
     className: "giro-finish-marker",
-    html: `<div style="position:relative;display:flex;flex-direction:column;align-items:flex-start;font-family:system-ui,sans-serif;pointer-events:auto;">
+    html: `<div style="position:relative;display:flex;flex-direction:column;align-items:flex-start;font-family:system-ui,sans-serif;pointer-events:auto;transform:translateX(${offsetX}px);">
       <div style="background:#fff;color:${color};padding:4px 8px;border:2px solid ${color};border-radius:6px;font-size:11px;font-weight:800;letter-spacing:0.04em;box-shadow:0 4px 12px rgba(0,0,0,0.35);white-space:nowrap;line-height:1.1;">
         🏆 ${label}<span style="opacity:0.85;font-weight:600;margin-left:4px;color:#1f1326;">· ${city}</span>
       </div>
