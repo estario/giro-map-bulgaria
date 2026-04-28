@@ -530,7 +530,7 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
         layer.clearLayers();
         L.marker([lat, lng], { icon: userIcon(), zIndexOffset: 1000 })
           .bindPopup(
-            `<div style="font-family:system-ui,sans-serif;"><strong>Твоята позиция</strong><br/><span style="color:#6b7280;font-size:12px;">${lat.toFixed(4)}, ${lng.toFixed(4)}</span></div>`,
+            `<div style="font-family:system-ui,sans-serif;"><strong>${t.yourPosition}</strong><br/><span style="color:#6b7280;font-size:12px;">${lat.toFixed(4)}, ${lng.toFixed(4)}</span></div>`,
           )
           .addTo(layer);
         L.circle([lat, lng], {
@@ -547,7 +547,7 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
       (err) => {
         console.error("Geolocation error", err);
         setLocating(false);
-        alert("Не успяхме да намерим позицията ти. Разреши достъп до локация в браузъра.");
+        alert(t.geoError);
       },
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 30000 },
     );
@@ -563,13 +563,13 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
       {routingCount > 0 && (
         <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[400] inline-flex items-center gap-2 rounded-full bg-background/95 backdrop-blur px-4 py-2 text-xs font-semibold shadow-lg border border-border">
           <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
-          Изчертаване по реалните пътища…
+          {t.routingLabel}
         </div>
       )}
       <div className="absolute top-4 right-4 z-[400] flex flex-col gap-2 items-end">
         <Button onClick={handleLocate} size="sm" className="shadow-lg" disabled={locating}>
           {locating ? <Loader2 className="h-4 w-4 animate-spin" /> : <LocateFixed className="h-4 w-4" />}
-          <span className="ml-2">Намери ме</span>
+          <span className="ml-2">{t.findMe}</span>
         </Button>
         <Button
           onClick={() => setShowEvents((v) => !v)}
@@ -578,7 +578,7 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
           className="shadow-lg"
         >
           <Sparkles className="h-4 w-4" />
-          <span className="ml-2">{showEvents ? "Скрий събития" : "Покажи събития"}</span>
+          <span className="ml-2">{showEvents ? t.hideEvents : t.showEvents}</span>
         </Button>
         <Button
           onClick={() => setShowOfficial((v) => !v)}
@@ -586,12 +586,12 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
           variant={showOfficial ? "default" : "secondary"}
           className="shadow-lg"
         >
-          <span className="ml-2">{showOfficial ? "Скрий KM маркери" : "Покажи KM маркери"}</span>
+          <span className="ml-2">{showOfficial ? t.hideKm : t.showKm}</span>
         </Button>
       </div>
       {/* Legend */}
       <div className="absolute bottom-4 left-4 z-[400] rounded-xl bg-background/95 backdrop-blur px-3 py-2 text-[11px] shadow-lg border border-border">
-        <div className="font-bold uppercase tracking-wider text-[10px] mb-1 text-muted-foreground">Събития</div>
+        <div className="font-bold uppercase tracking-wider text-[10px] mb-1 text-muted-foreground">{t.legendEvents}</div>
         <div className="flex flex-wrap gap-x-3 gap-y-1">
           {(Object.keys(tagEmoji) as Array<keyof typeof tagEmoji>).map((t) => (
             <span key={t} className="inline-flex items-center gap-1">
