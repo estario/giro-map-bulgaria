@@ -204,10 +204,13 @@ function addBurgasReferenceLayers(map: L.Map, layers: L.LayerGroup, activeStageI
     return true;
   };
 
+  const rsRaw = burgasUmapLayers.raceStages as unknown as {
+    type: string;
+    features: Array<{ properties?: { name?: string } }>;
+  };
   const filteredRaceStages = {
-    ...burgasUmapLayers.raceStages,
-    features: (burgasUmapLayers.raceStages as { features: Array<{ properties?: { name?: string } }> })
-      .features.filter((f) => stageMatches(String(f?.properties?.name ?? ""))),
+    ...rsRaw,
+    features: rsRaw.features.filter((f) => stageMatches(String(f?.properties?.name ?? ""))),
   };
 
   L.geoJSON(filteredRaceStages as never, {
