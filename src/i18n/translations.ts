@@ -51,6 +51,8 @@ type Dict = {
   passingLabel: string;
   closureLabel: string;
   eventsCount: (n: number) => string;
+  closuresPin: string;
+  eventsAt: (n: number) => string;
 
   // Stage detail
   schedule: string;
