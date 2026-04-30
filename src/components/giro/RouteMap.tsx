@@ -166,6 +166,11 @@ const pointTypeStyle: Record<GiroPoint["type"], { color: string; glyph: string; 
   poi:      { color: "#7c3aed", glyph: "★",  size: 20 },
 };
 
+function shouldRenderOfficialPoint(point: GiroPoint) {
+  const name = point.name.toLowerCase();
+  return point.type !== "start" && !name.includes("end of route") && !name.includes("начало на") && !name.includes("край на");
+}
+
 function officialPointIcon(type: GiroPoint["type"]) {
   const s = pointTypeStyle[type];
   return L.divIcon({
@@ -207,11 +212,14 @@ function addBurgasReferenceLayers(map: L.Map, layers: L.LayerGroup, activeStageI
 
   const rsRaw = burgasUmapLayers.raceStages as unknown as {
     type: string;
-    features: Array<{ properties?: { name?: string } }>;
+    features: Array<{ geometry?: { type?: string }; properties?: { name?: string } }>;
   };
   const filteredRaceStages = {
     ...rsRaw,
-    features: rsRaw.features.filter((f) => stageMatches(String(f?.properties?.name ?? ""))),
+    features: rsRaw.features.filter((f) => {
+      const geometryType = f?.geometry?.type;
+      return stageMatches(String(f?.properties?.name ?? "")) && (geometryType === "LineString" || geometryType === "MultiLineString");
+    }),
   };
 
   L.geoJSON(filteredRaceStages as never, {
@@ -359,7 +367,7 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
 
         // Official KML waypoints (KM markers, exits, POIs) — as a separate, toggleable layer
         if (showOfficial) {
-          for (const pt of official.points) {
+          for (const pt of official.points.filter(shouldRenderOfficialPoint)) {
             const m = L.marker([pt.lat, pt.lng], {
               icon: officialPointIcon(pt.type),
               zIndexOffset: pt.type === "start" || pt.type === "redbull" || pt.type === "halfway" ? 600 : 200,
