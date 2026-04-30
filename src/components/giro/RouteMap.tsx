@@ -25,6 +25,19 @@ function makeIcon(color: string, label: string, offsetX = 0) {
   });
 }
 
+function kmZeroIcon() {
+  return L.divIcon({
+    className: "giro-km-zero-marker",
+    html: `<div style="display:flex;align-items:center;gap:4px;font-family:system-ui,sans-serif;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.35));">
+      <div style="width:14px;height:14px;border-radius:9999px;background:#16a34a;border:3px solid #fff;"></div>
+      <div style="background:#fff;color:#14532d;border:2px solid #16a34a;border-radius:4px;padding:2px 6px;font-size:11px;font-weight:900;line-height:1;white-space:nowrap;">km 0</div>
+    </div>`,
+    iconSize: [58, 22],
+    iconAnchor: [7, 11],
+    popupAnchor: [18, -10],
+  });
+}
+
 // Distinct flag-style marker for stage START — clearly readable on the map
 // so two stages whose start/finish are close (e.g. Stage 1 finish in Burgas
 // and Stage 2 start in Burgas) cannot be confused.
@@ -408,6 +421,55 @@ function officialPointIcon(type: GiroPoint["type"]) {
   });
 }
 
+const STAGE1_NEUTRAL_ROUTE: [number, number][] = [
+  [42.660600, 27.736600],
+  [42.660395, 27.735897],
+  [42.660148, 27.735010],
+  [42.659618, 27.734989],
+  [42.658976, 27.734546],
+  [42.657956, 27.734219],
+  [42.657561, 27.733141],
+  [42.657066, 27.732512],
+  [42.658436, 27.730215],
+  [42.658871, 27.729939],
+  [42.659264, 27.728742],
+  [42.659330, 27.728476],
+  [42.659458, 27.725948],
+  [42.659100, 27.722900],
+  [42.658500, 27.720400],
+  [42.659700, 27.716500],
+  [42.662700, 27.712300],
+  [42.665500, 27.707472],
+  [42.669740, 27.706800],
+];
+
+function addStage1NeutralRoute(layers: L.LayerGroup, lang: Lang) {
+  const label =
+    lang === "bg"
+      ? "Неутрализиран стартов участък до km 0"
+      : lang === "it"
+        ? "Tratto neutralizzato fino al km 0"
+        : "Neutralized start section to km 0";
+
+  L.polyline(STAGE1_NEUTRAL_ROUTE as L.LatLngExpression[], {
+    color: "#ffffff",
+    weight: 9,
+    opacity: 0.92,
+    lineCap: "round",
+    lineJoin: "round",
+  }).addTo(layers);
+
+  L.polyline(STAGE1_NEUTRAL_ROUTE as L.LatLngExpression[], {
+    color: "#16a34a",
+    weight: 5,
+    opacity: 1,
+    lineCap: "round",
+    lineJoin: "round",
+  })
+    .addTo(layers)
+    .bindPopup(`<div style="font-family:system-ui,sans-serif;font-size:13px;font-weight:700;color:#14532d;">${label}</div>`);
+}
+
 function featurePopup(properties: Record<string, unknown>, lang: Lang) {
   const fallback = lang === "bg" ? "Детайл от картата" : lang === "en" ? "Map detail" : "Dettaglio mappa";
   const name = localizeClosureText(String(properties.name ?? fallback), lang);
@@ -596,6 +658,11 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
         }).addTo(layers);
         for (const p of official.route) allLatLngs.push(p as L.LatLngExpression);
 
+        if (stage.id === 1) {
+          addStage1NeutralRoute(layers, lang);
+          allLatLngs.push(...STAGE1_NEUTRAL_ROUTE);
+        }
+
         // Official KML waypoints (KM markers, exits, POIs) — as a separate, toggleable layer
         if (showOfficial) {
           for (const pt of official.points.filter(shouldRenderOfficialPoint)) {
@@ -661,6 +728,8 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
 
         const icon = isSharedFinish
           ? combinedFinishStartIcon(stage.color, nextStage!.color, markerFinishLabel(stage.id, lang), markerStartLabel(nextStage!.id, lang), localizePlaceName(stage.to, lang))
+          : wp.name.toLowerCase().includes("км0")
+            ? kmZeroIcon()
           : isStart
             ? startFlagIcon(stage.color, markerStartLabel(stage.id, lang), localizePlaceName(stage.from, lang))
             : isFinish
