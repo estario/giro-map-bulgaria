@@ -103,7 +103,7 @@ export const viewingSpots: ViewingSpot[] = [
   {
     id: "s1-burgas-chernomorets",
     stageId: 1,
-    coords: [42.4868, 27.4675],
+    coords: [42.4983, 27.4690],
     title: "Покрай стадион „Черноморец“",
     description: "Преминаване и в началото, и в края на етапа.",
     i18n: {
@@ -120,7 +120,7 @@ export const viewingSpots: ViewingSpot[] = [
   {
     id: "s1-sozopol-shofyorski",
     stageId: 1,
-    coords: [42.4136, 27.6886],
+    coords: [42.4135, 27.6928],
     title: "Созопол — Шофьорски плаж",
     description:
       "Едно от най-добрите места за наблюдаване на групата — колоездачите ще бъдат в непосредствена близост по време на ~22-километровата градска обиколка.",
@@ -417,7 +417,7 @@ export const viewingSpots: ViewingSpot[] = [
   {
     id: "s3-kokalyane",
     stageId: 3,
-    coords: [42.5740, 23.4282],
+    coords: [42.5679, 23.4483],
     title: "Кокаляне — „Самоковско шосе“",
     description: "Преминаване по Самоковско шосе.",
     i18n: {
