@@ -178,6 +178,20 @@ function markerFinishLabel(stageId: number, lang: Lang) {
   return `ФИНАЛ Е${stageId}`;
 }
 
+function localizePlaceName(name: string, lang: Lang) {
+  if (lang === "bg") return name;
+  let text = name;
+  for (const [bgName, labels] of Object.entries(placeLabels).sort((a, b) => b[0].length - a[0].length)) {
+    text = text.replaceAll(bgName, labels[lang]);
+    text = text.replaceAll(bgName.toUpperCase(), labels[lang].toUpperCase());
+  }
+  const replacements: Array<[RegExp, string]> = lang === "en"
+    ? [[/старт/gi, "start"], [/финал/gi, "finish"], [/км/gi, "km"], [/вход/gi, "entrance"], [/изход/gi, "exit"], [/разклон/gi, "junction"], [/втора обиколка|2-ра обиколка/gi, "second lap"], [/връщане/gi, "return"], [/етап/gi, "stage"]]
+    : [[/старт/gi, "partenza"], [/финал/gi, "arrivo"], [/км/gi, "km"], [/вход/gi, "ingresso"], [/изход/gi, "uscita"], [/разклон/gi, "bivio"], [/втора обиколка|2-ра обиколка/gi, "secondo giro"], [/връщане/gi, "ritorno"], [/етап/gi, "tappa"]];
+  for (const [pattern, replacement] of replacements) text = text.replace(pattern, replacement);
+  return text;
+}
+
 type TagLabels = Record<NonNullable<CulturalEvent["tag"]>, string>;
 
 function eventPopup(ev: CulturalEvent, cityName: string, color: string, weekdays: string[], months: string[], tagLabels: TagLabels) {
