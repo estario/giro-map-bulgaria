@@ -771,8 +771,11 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
       // with small fan-out offsets so multiple groups in the same city are
       // distinguishable on the map.
       const cityCenters: Record<string, [number, number]> = {
-        "несебър": [42.6587, 27.7307],
-        "бургас": [42.5048, 27.4626],
+        // Old Town Nessebar peninsula — keeps closure pins on land near the actual closed streets
+        "несебър": [42.6595, 27.7345],
+        // Burgas Stage 1 finish area — Demokratsia Blvd. near the Sea Garden
+        "бургас": [42.4990, 27.4740],
+        // Burgas Stage 2 start — pl. Troykata / Aleksandrovska
         "бургас (старт етап 2)": [42.4966, 27.4712],
         "велико търново": [43.0812, 25.6310],
         "пловдив": [42.1421, 24.7499],
@@ -783,9 +786,10 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
         const center = cityCenters[key];
         if (!center) return;
         cl.groups.forEach((group, gi) => {
-          // fan-out offset (~150–400 m) so multiple pins per city stay readable
+          // Tighter fan-out (~80–180 m) so multiple pins per city stay close to
+          // the actual closure area instead of drifting into the sea / industrial zones.
           const angle = ((ci * 3 + gi) * 55) * (Math.PI / 180);
-          const r = 0.0035 + ((ci + gi) % 3) * 0.0018;
+          const r = 0.0010 + ((ci + gi) % 3) * 0.0006;
           const lat = center[0] + Math.cos(angle) * r;
           const lng = center[1] + Math.sin(angle) * r * 1.35;
           const m = L.marker([lat, lng], {
