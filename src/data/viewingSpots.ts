@@ -140,17 +140,20 @@ export const viewingSpots: ViewingSpot[] = [
   {
     id: "s1-dyuni",
     stageId: 1,
-    coords: [42.3403, 27.7244],
-    title: "Дюни",
-    description: "Колоната преминава по пътя към Нос Агалина и обиколката на Созопол.",
+    coords: [42.4280, 27.5460],
+    title: "Росен",
+    description:
+      "Колоната минава през Росен по път II-99 — на път към обиколката на Созопол и при връщането към Бургас (двукратно преминаване).",
     i18n: {
       en: {
-        title: "Dyuni",
-        description: "The peloton passes here on the way to Cape Agalina and the Sozopol loop.",
+        title: "Rosen",
+        description:
+          "The peloton passes through Rosen on road II-99 — heading to the Sozopol loop and again on the way back to Burgas (two passes).",
       },
       it: {
-        title: "Dyuni",
-        description: "Il gruppo passa qui verso Capo Agalina e il circuito di Sozopol.",
+        title: "Rosen",
+        description:
+          "Il gruppo attraversa Rosen sulla strada II-99 — verso il circuito di Sozopol e di nuovo al ritorno verso Burgas (doppio passaggio).",
       },
     },
   },
