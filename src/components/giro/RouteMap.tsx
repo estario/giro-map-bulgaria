@@ -140,19 +140,20 @@ function eventIcon(color: string, glyph: string) {
   });
 }
 
-const WEEKDAYS_BG = ["нед", "пон", "вто", "сря", "чет", "пет", "съб"];
-const MONTHS_BG = ["януари","февруари","март","април","май","юни","юли","август","септември","октомври","ноември","декември"];
-function fmtDate(iso: string) {
+function fmtDateWith(iso: string, weekdays: string[], months: string[]) {
   const d = new Date(iso + "T00:00:00");
-  return `${d.getDate()} ${MONTHS_BG[d.getMonth()]} (${WEEKDAYS_BG[d.getDay()]})`;
+  return `${d.getDate()} ${months[d.getMonth()]} (${weekdays[d.getDay()]})`;
 }
 
-function eventPopup(ev: CulturalEvent, cityName: string, color: string) {
+type TagLabels = Record<NonNullable<CulturalEvent["tag"]>, string>;
+
+function eventPopup(ev: CulturalEvent, cityName: string, color: string, weekdays: string[], months: string[], tagLabels: TagLabels) {
+  const tagText = ev.tag ? tagLabels[ev.tag] : "";
   return `<div style="font-family:system-ui,sans-serif;max-width:280px;">
-    <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:${color};font-weight:800;">${cityName}${ev.tag ? ` · ${ev.tag}` : ""}</div>
+    <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:${color};font-weight:800;">${cityName}${tagText ? ` · ${tagText}` : ""}</div>
     <div style="font-size:14px;font-weight:700;margin:4px 0 6px;color:#1f1326;line-height:1.25;">${ev.title}</div>
     <div style="font-size:12px;color:#374151;display:flex;flex-direction:column;gap:3px;">
-      <div>📅 <strong>${fmtDate(ev.date)}</strong>${ev.time ? ` · ${ev.time}` : ""}</div>
+      <div>📅 <strong>${fmtDateWith(ev.date, weekdays, months)}</strong>${ev.time ? ` · ${ev.time}` : ""}</div>
       ${ev.location ? `<div>📍 ${ev.location}</div>` : ""}
     </div>
   </div>`;
