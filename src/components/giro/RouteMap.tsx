@@ -646,13 +646,13 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
       <div className="absolute bottom-4 left-4 z-[400] rounded-xl bg-background/95 backdrop-blur px-3 py-2 text-[11px] shadow-lg border border-border">
         <div className="font-bold uppercase tracking-wider text-[10px] mb-1 text-muted-foreground">{t.legendEvents}</div>
         <div className="flex flex-wrap gap-x-3 gap-y-1">
-          {(Object.keys(tagEmoji) as Array<keyof typeof tagEmoji>).map((t) => (
-            <span key={t} className="inline-flex items-center gap-1">
+          {(Object.keys(tagEmoji) as Array<keyof typeof tagEmoji>).map((tag) => (
+            <span key={tag} className="inline-flex items-center gap-1">
               <span
                 className="inline-block h-2.5 w-2.5 rounded-full"
-                style={{ background: tagColor[t] }}
+                style={{ background: tagColor[tag] }}
               />
-              {t}
+              {t.tagLabels[tag]}
             </span>
           ))}
         </div>
