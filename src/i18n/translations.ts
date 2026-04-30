@@ -91,6 +91,14 @@ type Dict = {
 
   metres: string;
   kmShort: string;
+  tagLabels: {
+    "култура": string;
+    "спорт": string;
+    "изложба": string;
+    "концерт": string;
+    "детско": string;
+    "церемония": string;
+  };
 };
 
 export const T: Record<Lang, Dict> = {
@@ -164,6 +172,14 @@ export const T: Record<Lang, Dict> = {
     ],
     metres: "м",
     kmShort: "км",
+    tagLabels: {
+      "култура": "култура",
+      "спорт": "спорт",
+      "изложба": "изложба",
+      "концерт": "концерт",
+      "детско": "детско",
+      "церемония": "церемония",
+    },
   },
   en: {
     grandePartenza: "Grande Partenza",
@@ -235,6 +251,14 @@ export const T: Record<Lang, Dict> = {
     ],
     metres: "m",
     kmShort: "km",
+    tagLabels: {
+      "култура": "culture",
+      "спорт": "sport",
+      "изложба": "exhibition",
+      "концерт": "concert",
+      "детско": "kids",
+      "церемония": "ceremony",
+    },
   },
   it: {
     grandePartenza: "Grande Partenza",
@@ -306,5 +330,13 @@ export const T: Record<Lang, Dict> = {
     ],
     metres: "m",
     kmShort: "km",
+    tagLabels: {
+      "култура": "cultura",
+      "спорт": "sport",
+      "изложба": "mostra",
+      "концерт": "concerto",
+      "детско": "bambini",
+      "церемония": "cerimonia",
+    },
   },
 };
