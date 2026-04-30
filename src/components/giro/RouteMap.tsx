@@ -564,14 +564,14 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
             zIndexOffset: 700,
           }).addTo(layers);
           const streetsHtml = group.streets
-            .map((s) => `<li style="margin:2px 0;">${s}</li>`)
+            .map((s) => `<li style="margin:2px 0;">${localizeClosureText(s, lang)}</li>`)
             .join("");
           m.bindPopup(`
             <div style="font-family:system-ui,sans-serif;max-width:320px;">
-              <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:#b91c1c;font-weight:800;">${t.closuresPin} · ${cl.city}</div>
-              <div style="font-size:13px;font-weight:700;margin:4px 0 6px;color:#1f1326;line-height:1.3;">${group.period}</div>
+              <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:#b91c1c;font-weight:800;">${t.closuresPin} · ${localizePlaceName(cl.city, lang)}</div>
+              <div style="font-size:13px;font-weight:700;margin:4px 0 6px;color:#1f1326;line-height:1.3;">${localizeClosureText(group.period, lang)}</div>
               <ul style="font-size:12px;color:#374151;padding-left:16px;margin:0;line-height:1.35;max-height:220px;overflow-y:auto;">${streetsHtml}</ul>
-              ${cl.note ? `<div style="font-size:11px;color:#6b7280;margin-top:6px;font-style:italic;">${cl.note}</div>` : ""}
+              ${cl.note ? `<div style="font-size:11px;color:#6b7280;margin-top:6px;font-style:italic;">${localizeClosureText(cl.note, lang)}</div>` : ""}
             </div>
           `);
         });
@@ -586,7 +586,7 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
     return () => {
       cancelled = true;
     };
-  }, [stages, activeStageId, showOfficial, t]);
+  }, [stages, activeStageId, showOfficial, t, lang]);
 
   // Render cultural / sport event pins
   useEffect(() => {
