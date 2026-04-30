@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import L from "leaflet";
 import type { Stage } from "@/data/stages";
 import { burgasUmapLayers } from "@/data/burgasUmap";
-import { cityPrograms, tagColor, type CulturalEvent } from "@/data/events";
+import { cityPrograms, tagColor, localizeEvent, localizeCityName, type CulturalEvent } from "@/data/events";
 import { GIRO_STAGES, type GiroPoint } from "@/data/giroStages";
 import { Button } from "@/components/ui/button";
 import { LocateFixed, Loader2, Sparkles } from "lucide-react";
@@ -214,12 +214,13 @@ type TagLabels = Record<NonNullable<CulturalEvent["tag"]>, string>;
 
 function eventPopup(ev: CulturalEvent, cityName: string, color: string, weekdays: string[], months: string[], tagLabels: TagLabels, lang: Lang) {
   const tagText = ev.tag ? tagLabels[ev.tag] : "";
+  const loc = localizeEvent(ev, lang);
   return `<div style="font-family:system-ui,sans-serif;max-width:280px;">
-    <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:${color};font-weight:800;">${localizePlaceName(cityName, lang)}${tagText ? ` · ${tagText}` : ""}</div>
-    <div style="font-size:14px;font-weight:700;margin:4px 0 6px;color:#1f1326;line-height:1.25;">${ev.title}</div>
+    <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:${color};font-weight:800;">${cityName}${tagText ? ` · ${tagText}` : ""}</div>
+    <div style="font-size:14px;font-weight:700;margin:4px 0 6px;color:#1f1326;line-height:1.25;">${loc.title}</div>
     <div style="font-size:12px;color:#374151;display:flex;flex-direction:column;gap:3px;">
       <div>📅 <strong>${fmtDateWith(ev.date, weekdays, months)}</strong>${ev.time ? ` · ${ev.time}` : ""}</div>
-      ${ev.location ? `<div>📍 ${ev.location}</div>` : ""}
+      ${loc.location ? `<div>📍 ${loc.location}</div>` : ""}
     </div>
   </div>`;
 }
