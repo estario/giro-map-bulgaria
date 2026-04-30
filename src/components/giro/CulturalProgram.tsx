@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { cityPrograms, tagColor, type CityKey, type CulturalEvent } from "@/data/events";
+import { cityPrograms, tagColor, localizeEvent, localizeCityName, type CityKey, type CulturalEvent } from "@/data/events";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -32,9 +32,9 @@ function groupByDate(events: CulturalEvent[]) {
 
 export default function CulturalProgram() {
   const [city, setCity] = useState<CityKey>("nesebar");
-  const { t } = useT();
+  const { t, lang } = useT();
   const program = cityPrograms.find((c) => c.key === city)!;
-  const grouped = useMemo(() => groupByDate(program.events), [program]);
+  // grouped is computed per-tab below
 
   const totalEvents = cityPrograms.reduce((s, c) => s + c.events.length, 0);
 
@@ -59,7 +59,7 @@ export default function CulturalProgram() {
         <TabsList className="grid w-full grid-cols-2 md:grid-cols-6 h-auto p-1">
           {cityPrograms.map((c) => (
             <TabsTrigger key={c.key} value={c.key} className="py-2.5">
-              {c.name}
+              {localizeCityName(c, lang)}
               <span className="ml-2 text-xs opacity-60 tabular-nums">{c.events.length}</span>
             </TabsTrigger>
           ))}
@@ -104,6 +104,8 @@ function DayBlock({ date, events }: { date: string; events: CulturalEvent[] }) {
 }
 
 function EventCard({ event }: { event: CulturalEvent }) {
+  const { lang } = useT();
+  const loc = localizeEvent(event, lang);
   const color = event.tag ? tagColor[event.tag] : "var(--rosa-deep)";
   return (
     <Card className="rounded-2xl border border-border/70 transition-[box-shadow,transform] hover:shadow-[var(--shadow-rosa)] hover:-translate-y-0.5">
@@ -123,19 +125,19 @@ function EventCard({ event }: { event: CulturalEvent }) {
               )}
               {event.tag && (
                 <Badge variant="secondary" className="capitalize text-[10px] px-2 py-0">
-                  {event.tag}
+                  {(useT().t.tagLabels as Record<string, string>)[event.tag] ?? event.tag}
                 </Badge>
               )}
             </div>
-            <h4 className="mt-1.5 font-semibold leading-snug text-pretty">{event.title}</h4>
-            {event.location && (
+            <h4 className="mt-1.5 font-semibold leading-snug text-pretty">{loc.title}</h4>
+            {loc.location && (
               <p className="mt-1.5 text-sm text-muted-foreground inline-flex items-start gap-1.5">
                 <MapPin className="h-3.5 w-3.5 mt-0.5 shrink-0" />
-                <span>{event.location}</span>
+                <span>{loc.location}</span>
               </p>
             )}
-            {event.description && (
-              <p className="mt-1 text-sm text-muted-foreground">{event.description}</p>
+            {loc.description && (
+              <p className="mt-1 text-sm text-muted-foreground">{loc.description}</p>
             )}
           </div>
         </div>
