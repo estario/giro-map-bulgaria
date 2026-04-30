@@ -56,7 +56,7 @@ export default function CulturalProgram() {
       </div>
 
       <Tabs value={city} onValueChange={(v) => setCity(v as CityKey)}>
-        <TabsList className="grid w-full grid-cols-2 md:grid-cols-5 h-auto p-1">
+        <TabsList className="grid w-full grid-cols-2 md:grid-cols-6 h-auto p-1">
           {cityPrograms.map((c) => (
             <TabsTrigger key={c.key} value={c.key} className="py-2.5">
               {c.name}
