@@ -558,7 +558,7 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
           (a.ev.date + (a.ev.time ?? "")).localeCompare(b.ev.date + (b.ev.time ?? "")),
         );
         const html = `<div style="font-family:system-ui,sans-serif;max-width:300px;max-height:300px;overflow-y:auto;">
-          <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:${primary.color};font-weight:800;margin-bottom:6px;">${primary.cityName} · ${items.length} събития</div>
+          <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:${primary.color};font-weight:800;margin-bottom:6px;">${primary.cityName} · ${t.eventsAt(items.length)}</div>
           ${sorted.map(({ ev, color }) => `
             <div style="border-top:1px solid #e5e7eb;padding:6px 0;">
               <div style="font-size:11px;color:${color};font-weight:700;">${fmtDate(ev.date)}${ev.time ? ` · ${ev.time}` : ""}${ev.tag ? ` · ${ev.tag}` : ""}</div>
@@ -570,7 +570,7 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
         marker.bindPopup(html);
       }
     }
-  }, [showEvents]);
+  }, [showEvents, t]);
 
   const handleLocate = () => {
     if (!navigator.geolocation || !mapRef.current || !userLayerRef.current) return;
