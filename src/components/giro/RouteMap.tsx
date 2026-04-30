@@ -408,6 +408,55 @@ function officialPointIcon(type: GiroPoint["type"]) {
   });
 }
 
+const STAGE1_NEUTRAL_ROUTE: [number, number][] = [
+  [42.660600, 27.736600],
+  [42.660395, 27.735897],
+  [42.660148, 27.735010],
+  [42.659618, 27.734989],
+  [42.658976, 27.734546],
+  [42.657956, 27.734219],
+  [42.657561, 27.733141],
+  [42.657066, 27.732512],
+  [42.658436, 27.730215],
+  [42.658871, 27.729939],
+  [42.659264, 27.728742],
+  [42.659330, 27.728476],
+  [42.659458, 27.725948],
+  [42.659100, 27.722900],
+  [42.658500, 27.720400],
+  [42.659700, 27.716500],
+  [42.662700, 27.712300],
+  [42.665500, 27.707472],
+  [42.669740, 27.706800],
+];
+
+function addStage1NeutralRoute(layers: L.LayerGroup, lang: Lang) {
+  const label =
+    lang === "bg"
+      ? "Неутрализиран стартов участък до km 0"
+      : lang === "it"
+        ? "Tratto neutralizzato fino al km 0"
+        : "Neutralized start section to km 0";
+
+  L.polyline(STAGE1_NEUTRAL_ROUTE as L.LatLngExpression[], {
+    color: "#ffffff",
+    weight: 9,
+    opacity: 0.92,
+    lineCap: "round",
+    lineJoin: "round",
+  }).addTo(layers);
+
+  L.polyline(STAGE1_NEUTRAL_ROUTE as L.LatLngExpression[], {
+    color: "#16a34a",
+    weight: 5,
+    opacity: 1,
+    lineCap: "round",
+    lineJoin: "round",
+  })
+    .addTo(layers)
+    .bindPopup(`<div style="font-family:system-ui,sans-serif;font-size:13px;font-weight:700;color:#14532d;">${label}</div>`);
+}
+
 function featurePopup(properties: Record<string, unknown>, lang: Lang) {
   const fallback = lang === "bg" ? "Детайл от картата" : lang === "en" ? "Map detail" : "Dettaglio mappa";
   const name = localizeClosureText(String(properties.name ?? fallback), lang);
