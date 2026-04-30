@@ -53,6 +53,14 @@ type Dict = {
   eventsCount: (n: number) => string;
   closuresPin: string;
   eventsAt: (n: number) => string;
+  stageTypeLabels: {
+    km: string;
+    halfway: string;
+    redbull: string;
+    road: string;
+    poi: string;
+    start: string;
+  };
 
   // Stage detail
   schedule: string;
@@ -139,6 +147,14 @@ export const T: Record<Lang, Dict> = {
     eventsCount: (n) => `${n} събития`,
     closuresPin: "Затваряне",
     eventsAt: (n) => `${n} събития`,
+    stageTypeLabels: {
+      km: "КМ маркер",
+      halfway: "Половина маршрут",
+      redbull: "Red Bull км",
+      road: "Пътна точка",
+      poi: "Точка по маршрута",
+      start: "Старт",
+    },
     schedule: "График за преминаване",
     place: "Място",
     km: "км",
@@ -218,6 +234,14 @@ export const T: Record<Lang, Dict> = {
     eventsCount: (n) => `${n} events`,
     closuresPin: "Closure",
     eventsAt: (n) => `${n} events`,
+    stageTypeLabels: {
+      km: "KM marker",
+      halfway: "Halfway point",
+      redbull: "Red Bull km",
+      road: "Road point",
+      poi: "Route point",
+      start: "Start",
+    },
     schedule: "Passage schedule",
     place: "Place",
     km: "km",
@@ -297,6 +321,14 @@ export const T: Record<Lang, Dict> = {
     eventsCount: (n) => `${n} eventi`,
     closuresPin: "Chiusura",
     eventsAt: (n) => `${n} eventi`,
+    stageTypeLabels: {
+      km: "Marcatore KM",
+      halfway: "Metà percorso",
+      redbull: "Red Bull km",
+      road: "Punto stradale",
+      poi: "Punto percorso",
+      start: "Partenza",
+    },
     schedule: "Orari di passaggio",
     place: "Località",
     km: "km",
