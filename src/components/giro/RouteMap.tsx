@@ -182,6 +182,76 @@ const placeLabels: Record<string, Record<Lang, string>> = {
   "София": { bg: "София", en: "Sofia", it: "Sofia" },
 };
 
+// Extended list of toponyms used in stage waypoints / closures so that
+// English & Italian popups don't fall back to Cyrillic.
+const extraPlaceLabels: Record<string, Record<Lang, string>> = {
+  // ====== Stage 1 ======
+  "Равда": { bg: "Равда", en: "Ravda", it: "Ravda" },
+  "Ахелой": { bg: "Ахелой", en: "Aheloy", it: "Aheloy" },
+  "Поморие запад": { bg: "Поморие запад", en: "Pomorie west", it: "Pomorie ovest" },
+  "Поморие": { bg: "Поморие", en: "Pomorie", it: "Pomorie" },
+  "Сарафово": { bg: "Сарафово", en: "Sarafovo", it: "Sarafovo" },
+  "Бургас Сарафово": { bg: "Бургас Сарафово", en: "Burgas Sarafovo", it: "Burgas Sarafovo" },
+  "Бургас център": { bg: "Бургас център", en: "Burgas centre", it: "Burgas centro" },
+  "Бургас вход": { bg: "Бургас вход", en: "Burgas entry", it: "Burgas ingresso" },
+  "Росен": { bg: "Росен", en: "Rosen", it: "Rosen" },
+  "Черноморец": { bg: "Черноморец", en: "Chernomorets", it: "Chernomorets" },
+  "Созопол": { bg: "Созопол", en: "Sozopol", it: "Sozopol" },
+  // ====== Stage 2 ======
+  "Дъбник": { bg: "Дъбник", en: "Dabnik", it: "Dabnik" },
+  "Айтос": { bg: "Айтос", en: "Aytos", it: "Aytos" },
+  "Лозарево": { bg: "Лозарево", en: "Lozarevo", it: "Lozarevo" },
+  "Черноград": { bg: "Черноград", en: "Chernograd", it: "Chernograd" },
+  "Карнобат": { bg: "Карнобат", en: "Karnobat", it: "Karnobat" },
+  "Венец": { bg: "Венец", en: "Venets", it: "Venets" },
+  "Деветак": { bg: "Деветак", en: "Devetak", it: "Devetak" },
+  "Лозенец": { bg: "Лозенец", en: "Lozenets", it: "Lozenets" },
+  "Горно Александрово": { bg: "Горно Александрово", en: "Gorno Aleksandrovo", it: "Gorno Aleksandrovo" },
+  "Трапоклово": { bg: "Трапоклово", en: "Trapoklovo", it: "Trapoklovo" },
+  "Калояново": { bg: "Калояново", en: "Kaloyanovo", it: "Kaloyanovo" },
+  "Сливен": { bg: "Сливен", en: "Sliven", it: "Sliven" },
+  "Асенов мост": { bg: "Асенов мост", en: "Asenov Bridge", it: "Ponte Asen" },
+  "Проход Бяла": { bg: "Проход Бяла", en: "Byala Pass", it: "Passo Byala" },
+  "Бяла": { bg: "Бяла", en: "Byala", it: "Byala" },
+  "Проход Вратник": { bg: "Проход Вратник", en: "Vratnik Pass", it: "Passo Vratnik" },
+  "Камен": { bg: "Камен", en: "Kamen", it: "Kamen" },
+  "Майско": { bg: "Майско", en: "Maysko", it: "Maysko" },
+  "Константин": { bg: "Константин", en: "Konstantin", it: "Konstantin" },
+  "Марян": { bg: "Марян", en: "Maryan", it: "Maryan" },
+  "Милковци": { bg: "Милковци", en: "Milkovtsi", it: "Milkovtsi" },
+  "Беброво": { bg: "Беброво", en: "Bebrovo", it: "Bebrovo" },
+  "Миндя": { bg: "Миндя", en: "Mindya", it: "Mindya" },
+  "Мерданя": { bg: "Мерданя", en: "Merdanya", it: "Merdanya" },
+  // ====== Stage 3 ======
+  "Стамболийски": { bg: "Стамболийски", en: "Stamboliyski", it: "Stamboliyski" },
+  "Кричим разклон": { bg: "Кричим разклон", en: "Krichim junction", it: "Bivio Krichim" },
+  "Мало Конаре": { bg: "Мало Конаре", en: "Malo Konare", it: "Malo Konare" },
+  "Пазарджик": { bg: "Пазарджик", en: "Pazardzhik", it: "Pazardzhik" },
+  "Звъничево": { bg: "Звъничево", en: "Zvanichevo", it: "Zvanichevo" },
+  "Септември": { bg: "Септември", en: "Septemvri", it: "Septemvri" },
+  "Белово": { bg: "Белово", en: "Belovo", it: "Belovo" },
+  "Момина клисура": { bg: "Момина клисура", en: "Momina Klisura", it: "Momina Klisura" },
+  "Костенец": { bg: "Костенец", en: "Kostenets", it: "Kostenets" },
+  "Долна баня": { bg: "Долна баня", en: "Dolna Banya", it: "Dolna Banya" },
+  "Радуил": { bg: "Радуил", en: "Raduil", it: "Raduil" },
+  "Боровец проход": { bg: "Боровец проход", en: "Borovets Pass", it: "Passo Borovets" },
+  "Боровец": { bg: "Боровец", en: "Borovets", it: "Borovets" },
+  "Самоков": { bg: "Самоков", en: "Samokov", it: "Samokov" },
+  "Бели Искър разклон": { bg: "Бели Искър разклон", en: "Beli Iskar junction", it: "Bivio Beli Iskar" },
+  "Яз. Искър": { bg: "Яз. Искър", en: "Iskar Reservoir", it: "Lago di Iskar" },
+  "Долни Пасарел": { bg: "Долни Пасарел", en: "Dolni Pasarel", it: "Dolni Pasarel" },
+  "Кокаляне": { bg: "Кокаляне", en: "Kokalyane", it: "Kokalyane" },
+  "Панчарево": { bg: "Панчарево", en: "Pancharevo", it: "Pancharevo" },
+  "Цариградско шосе": { bg: "Цариградско шосе", en: "Tsarigradsko Shose", it: "Tsarigradsko Shose" },
+  // ====== Closures: city headings ======
+  "Бургас (старт етап 2)": { bg: "Бургас (старт етап 2)", en: "Burgas (Stage 2 start)", it: "Burgas (partenza Tappa 2)" },
+};
+
+const ALL_PLACE_LABELS: Record<string, Record<Lang, string>> = {
+  ...placeLabels,
+  ...extraPlaceLabels,
+};
+
 function markerStartLabel(stageId: number, lang: Lang) {
   if (lang === "en") return `START S${stageId}`;
   if (lang === "it") return `PARTENZA T${stageId}`;
@@ -197,13 +267,34 @@ function markerFinishLabel(stageId: number, lang: Lang) {
 function localizePlaceName(name: string, lang: Lang) {
   if (lang === "bg") return name;
   let text = name;
-  for (const [bgName, labels] of Object.entries(placeLabels).sort((a, b) => b[0].length - a[0].length)) {
+  for (const [bgName, labels] of Object.entries(ALL_PLACE_LABELS).sort((a, b) => b[0].length - a[0].length)) {
     text = text.replaceAll(bgName, labels[lang]);
     text = text.replaceAll(bgName.toUpperCase(), labels[lang].toUpperCase());
   }
+  // Word-level replacements with Unicode word boundaries, so we don't chew
+  // up syllables inside other Bulgarian words (e.g. /на/ inside "народно").
+  const wb = (w: string) => new RegExp(`(?<![A-Za-zА-Яа-я])${w}(?![A-Za-zА-Яа-я])`, "gi");
   const replacements: Array<[RegExp, string]> = lang === "en"
-    ? [[/старт/gi, "start"], [/финал/gi, "finish"], [/км/gi, "km"], [/вход/gi, "entrance"], [/изход/gi, "exit"], [/разклон/gi, "junction"], [/втора обиколка|2-ра обиколка/gi, "second lap"], [/връщане/gi, "return"], [/етап/gi, "stage"]]
-    : [[/старт/gi, "partenza"], [/финал/gi, "arrivo"], [/км/gi, "km"], [/вход/gi, "ingresso"], [/изход/gi, "uscita"], [/разклон/gi, "bivio"], [/втора обиколка|2-ра обиколка/gi, "secondo giro"], [/връщане/gi, "ritorno"], [/етап/gi, "tappa"]];
+    ? [
+        [wb("втора обиколка"), "second lap"], [wb("2-ра обиколка"), "second lap"],
+        [wb("обиколка"), "lap"],
+        [wb("отклонение"), "junction"], [wb("разклон"), "junction"],
+        [wb("проход"), "pass"], [wb("манастир"), "monastery"],
+        [wb("връщане"), "return"], [wb("вход"), "entry"], [wb("изход"), "exit"],
+        [wb("център"), "centre"], [wb("запад"), "west"], [wb("изток"), "east"],
+        [wb("етап"), "stage"], [wb("старт"), "start"], [wb("финал"), "finish"],
+        [wb("км0"), "km 0"], [wb("км"), "km"],
+      ]
+    : [
+        [wb("втора обиколка"), "secondo giro"], [wb("2-ра обиколка"), "secondo giro"],
+        [wb("обиколка"), "giro"],
+        [wb("отклонение"), "bivio"], [wb("разклон"), "bivio"],
+        [wb("проход"), "passo"], [wb("манастир"), "monastero"],
+        [wb("връщане"), "ritorno"], [wb("вход"), "ingresso"], [wb("изход"), "uscita"],
+        [wb("център"), "centro"], [wb("запад"), "ovest"], [wb("изток"), "est"],
+        [wb("етап"), "tappa"], [wb("старт"), "partenza"], [wb("финал"), "arrivo"],
+        [wb("км0"), "km 0"], [wb("км"), "km"],
+      ];
   for (const [pattern, replacement] of replacements) text = text.replace(pattern, replacement);
   return text;
 }
@@ -211,18 +302,67 @@ function localizePlaceName(name: string, lang: Lang) {
 function localizeClosureText(text: string, lang: Lang) {
   if (lang === "bg") return text;
   let result = localizePlaceName(text, lang);
-  const replacements: Array<[RegExp, string]> = lang === "en"
+  // Multi-word phrases first (longest -> shortest), then individual words with
+  // Unicode word boundaries. Critically, we DO NOT translate short particles
+  // like "на", "от", "при", "в" — they appear inside many Bulgarian words
+  // and naive global replace destroys readable text.
+  const wb = (w: string) => new RegExp(`(?<![A-Za-zА-Яа-я])${w}(?![A-Za-zА-Яа-я])`, "gi");
+  const phrases: Array<[RegExp, string]> = lang === "en"
     ? [
-        [/ч\. на/gi, "on"], [/ч\./gi, ""], [/път при/gi, "Road at"], [/ул\./gi, "St."], [/бул\./gi, "Blvd."], [/пл\./gi, "Sq."],
-        [/затворено за движение/gi, "closed to traffic"], [/пълно затваряне на движението/gi, "full traffic closure"], [/забрана за паркиране/gi, "parking ban"], [/забрана за престой и паркиране/gi, "stopping and parking ban"], [/забрана за влизане на МПС/gi, "vehicle entry ban"],
-        [/преминаване на колоната/gi, "peloton passage"], [/технически дейности по трасето/gi, "technical work on the route"], [/цялото трасе на финала/gi, "the full finish route"], [/само за градски транспорт/gi, "public transport only"], [/финиш/gi, "finish"], [/старт/gi, "start"], [/в зоната на/gi, "in the area of"], [/северно от/gi, "north of"], [/в двете посоки/gi, "both directions"], [/отклонение/gi, "junction"], [/при/gi, "at"], [/от/gi, "from"], [/на/gi, "on"],
+        [/преминаване на колоната(?:; 2-ро влизане[^)]*)?/gi, "peloton passage"],
+        [/технически дейности по трасето/gi, "technical work on the route"],
+        [/цялото трасе на финала в София/gi, "the full Sofia finish route"],
+        [/цялото трасе на финала/gi, "the full finish route"],
+        [/забрана за престой и паркиране/gi, "stopping and parking ban"],
+        [/забрана за паркиране/gi, "parking ban"],
+        [/забрана за влизане на МПС/gi, "vehicle entry ban"],
+        [/пълно затваряне на движението/gi, "full traffic closure"],
+        [/затворено за движение/gi, "closed to traffic"],
+        [/само за градски транспорт/gi, "public transport only"],
+        [/всички пресичащи улици се затварят/gi, "all crossing streets are closed"],
+        [/в зоната на кръстовищата/gi, "at junction areas"],
+        [/в зоната на финала/gi, "in the finish area"],
+        [/в зоната на/gi, "in the area of"],
+        [/път при/gi, "Road at"],
+        [/в двете посоки/gi, "both directions"],
+        [/северно от/gi, "north of"],
+        [/част от паркинг/gi, "part of car park"],
+        [/ч\. на/gi, "on"], [/ч\./gi, ""],
+        [/ул\./gi, "St."], [/бул\./gi, "Blvd."], [/пл\./gi, "Sq."], [/кв\./gi, "district"], [/с\./gi, "village"],
       ]
     : [
-        [/ч\. на/gi, "del"], [/ч\./gi, ""], [/път при/gi, "Strada presso"], [/ул\./gi, "Via"], [/бул\./gi, "Viale"], [/пл\./gi, "Piazza"],
-        [/затворено за движение/gi, "chiusa al traffico"], [/пълно затваряне на движението/gi, "chiusura totale al traffico"], [/забрана за паркиране/gi, "divieto di parcheggio"], [/забрана за престой и паркиране/gi, "divieto di sosta e parcheggio"], [/забрана за влизане на МПС/gi, "divieto di accesso ai veicoli"],
-        [/преминаване на колоната/gi, "passaggio del gruppo"], [/технически дейности по трасето/gi, "lavori tecnici sul percorso"], [/цялото трасе на финала/gi, "tutto il percorso di arrivo"], [/само за градски транспорт/gi, "solo trasporto pubblico"], [/финиш/gi, "arrivo"], [/старт/gi, "partenza"], [/в зоната на/gi, "nell'area di"], [/северно от/gi, "a nord di"], [/в двете посоки/gi, "in entrambe le direzioni"], [/отклонение/gi, "bivio"], [/при/gi, "presso"], [/от/gi, "dalle"], [/на/gi, "il"],
+        [/преминаване на колоната(?:; 2-ро влизане[^)]*)?/gi, "passaggio del gruppo"],
+        [/технически дейности по трасето/gi, "lavori tecnici sul percorso"],
+        [/цялото трасе на финала в София/gi, "tutto il percorso di arrivo a Sofia"],
+        [/цялото трасе на финала/gi, "tutto il percorso di arrivo"],
+        [/забрана за престой и паркиране/gi, "divieto di sosta e parcheggio"],
+        [/забрана за паркиране/gi, "divieto di parcheggio"],
+        [/забрана за влизане на МПС/gi, "divieto di accesso ai veicoli"],
+        [/пълно затваряне на движението/gi, "chiusura totale al traffico"],
+        [/затворено за движение/gi, "chiusa al traffico"],
+        [/само за градски транспорт/gi, "solo trasporto pubblico"],
+        [/всички пресичащи улици се затварят/gi, "tutte le vie trasversali chiuse"],
+        [/в зоната на кръстовищата/gi, "nell'area degli incroci"],
+        [/в зоната на финала/gi, "nell'area di arrivo"],
+        [/в зоната на/gi, "nell'area di"],
+        [/път при/gi, "Strada presso"],
+        [/в двете посоки/gi, "in entrambe le direzioni"],
+        [/северно от/gi, "a nord di"],
+        [/част от паркинг/gi, "parte del parcheggio"],
+        [/ч\. на/gi, "del"], [/ч\./gi, ""],
+        [/ул\./gi, "Via"], [/бул\./gi, "Viale"], [/пл\./gi, "Piazza"], [/кв\./gi, "quartiere"], [/с\./gi, "villaggio"],
       ];
-  for (const [pattern, replacement] of replacements) result = result.replace(pattern, replacement);
+  for (const [pattern, replacement] of phrases) result = result.replace(pattern, replacement);
+  const words: Array<[RegExp, string]> = lang === "en"
+    ? [
+        [wb("финиш"), "finish"], [wb("старт"), "start"], [wb("финал"), "finish"],
+        [wb("отклонение"), "junction"], [wb("разклон"), "junction"],
+      ]
+    : [
+        [wb("финиш"), "arrivo"], [wb("старт"), "partenza"], [wb("финал"), "arrivo"],
+        [wb("отклонение"), "bivio"], [wb("разклон"), "bivio"],
+      ];
+  for (const [pattern, replacement] of words) result = result.replace(pattern, replacement);
   return result.replace(/\s{2,}/g, " ").trim();
 }
 
