@@ -500,11 +500,11 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
         if (isSharedStartSkip) return;
 
         const icon = isSharedFinish
-          ? combinedFinishStartIcon(stage.color, nextStage!.color, stage.id, nextStage!.id, stage.to)
+          ? combinedFinishStartIcon(stage.color, nextStage!.color, markerFinishLabel(stage.id, lang), markerStartLabel(nextStage!.id, lang), localizePlaceName(stage.to, lang))
           : isStart
-            ? startFlagIcon(stage.color, stage.id, stage.from)
+            ? startFlagIcon(stage.color, markerStartLabel(stage.id, lang), localizePlaceName(stage.from, lang))
             : isFinish
-              ? finishFlagIcon(stage.color, stage.id, stage.to)
+              ? finishFlagIcon(stage.color, markerFinishLabel(stage.id, lang), localizePlaceName(stage.to, lang))
               : makeIcon(stage.color, `${stage.id}`);
         const marker = L.marker(wp.coords as L.LatLngExpression, {
           icon,
@@ -514,8 +514,8 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
         const popupHtml = isSharedFinish
           ? `
           <div style="font-family:system-ui,sans-serif;min-width:220px;">
-            <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.05em;color:${stage.color};font-weight:700;">${t.finishStageN(stage.id)} · ${stage.to}</div>
-            <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.05em;color:${nextStage!.color};font-weight:700;margin-top:2px;">${t.startStageN(nextStage!.id)} · ${nextStage!.from}</div>
+            <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.05em;color:${stage.color};font-weight:700;">${t.finishStageN(stage.id)} · ${localizePlaceName(stage.to, lang)}</div>
+            <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.05em;color:${nextStage!.color};font-weight:700;margin-top:2px;">${t.startStageN(nextStage!.id)} · ${localizePlaceName(nextStage!.from, lang)}</div>
             <div style="font-size:13px;color:#374151;margin-top:8px;line-height:1.35;">${t.sharedPointDesc(stage.id, nextStage!.id)}</div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:8px;font-size:12px;">
               <div style="color:${stage.color};"><strong>${t.finishE(stage.id)}</strong><br/>${wp.raceTime}</div>
@@ -524,8 +524,8 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
           </div>`
           : `
           <div style="font-family:system-ui,sans-serif;min-width:200px;">
-            <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.05em;color:${stage.color};font-weight:700;">${stage.name} · ${stage.from} → ${stage.to}</div>
-            <div style="font-size:15px;font-weight:700;margin:4px 0;color:#1f1326;">${wp.name}</div>
+            <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.05em;color:${stage.color};font-weight:700;">${t.stageN(stage.id)} · ${localizePlaceName(stage.from, lang)} → ${localizePlaceName(stage.to, lang)}</div>
+            <div style="font-size:15px;font-weight:700;margin:4px 0;color:#1f1326;">${localizePlaceName(wp.name, lang)}</div>
             ${wp.road ? `<div style="font-size:12px;color:#6b7280;">${t.road} ${wp.road}</div>` : ""}
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:8px;font-size:12px;">
               <div><strong>${t.totalKmLabel}</strong><br/>${wp.totalKm}</div>
