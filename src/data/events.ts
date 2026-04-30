@@ -1,5 +1,13 @@
 export type CityKey = "nesebar" | "burgas" | "veliko-tarnovo" | "plovdiv" | "sofia" | "kostenets";
 
+export type EventLang = "en" | "it";
+
+export interface EventI18nFields {
+  title: string;
+  location?: string;
+  description?: string;
+}
+
 export interface CulturalEvent {
   /** ISO date YYYY-MM-DD */
   date: string;
@@ -12,11 +20,15 @@ export interface CulturalEvent {
   tag?: "култура" | "спорт" | "изложба" | "концерт" | "детско" | "церемония";
   /** [lat, lng] — optional; if present the event is pinned on the map */
   coords?: [number, number];
+  /** Optional translations for the event content (English / Italian). */
+  i18n?: Partial<Record<EventLang, EventI18nFields>>;
 }
 
 export interface CityProgram {
   key: CityKey;
   name: string;
+  /** Optional localized city name (English / Italian). */
+  nameI18n?: Partial<Record<EventLang, string>>;
   /** color hint matching its stage */
   color: string;
   events: CulturalEvent[];
