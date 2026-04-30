@@ -140,19 +140,20 @@ function eventIcon(color: string, glyph: string) {
   });
 }
 
-const WEEKDAYS_BG = ["нед", "пон", "вто", "сря", "чет", "пет", "съб"];
-const MONTHS_BG = ["януари","февруари","март","април","май","юни","юли","август","септември","октомври","ноември","декември"];
-function fmtDate(iso: string) {
+function fmtDateWith(iso: string, weekdays: string[], months: string[]) {
   const d = new Date(iso + "T00:00:00");
-  return `${d.getDate()} ${MONTHS_BG[d.getMonth()]} (${WEEKDAYS_BG[d.getDay()]})`;
+  return `${d.getDate()} ${months[d.getMonth()]} (${weekdays[d.getDay()]})`;
 }
 
-function eventPopup(ev: CulturalEvent, cityName: string, color: string) {
+type TagLabels = Record<NonNullable<CulturalEvent["tag"]>, string>;
+
+function eventPopup(ev: CulturalEvent, cityName: string, color: string, weekdays: string[], months: string[], tagLabels: TagLabels) {
+  const tagText = ev.tag ? tagLabels[ev.tag] : "";
   return `<div style="font-family:system-ui,sans-serif;max-width:280px;">
-    <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:${color};font-weight:800;">${cityName}${ev.tag ? ` · ${ev.tag}` : ""}</div>
+    <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:${color};font-weight:800;">${cityName}${tagText ? ` · ${tagText}` : ""}</div>
     <div style="font-size:14px;font-weight:700;margin:4px 0 6px;color:#1f1326;line-height:1.25;">${ev.title}</div>
     <div style="font-size:12px;color:#374151;display:flex;flex-direction:column;gap:3px;">
-      <div>📅 <strong>${fmtDate(ev.date)}</strong>${ev.time ? ` · ${ev.time}` : ""}</div>
+      <div>📅 <strong>${fmtDateWith(ev.date, weekdays, months)}</strong>${ev.time ? ` · ${ev.time}` : ""}</div>
       ${ev.location ? `<div>📍 ${ev.location}</div>` : ""}
     </div>
   </div>`;
@@ -552,7 +553,7 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
       }).addTo(layer);
 
       if (items.length === 1) {
-        marker.bindPopup(eventPopup(primary.ev, primary.cityName, primary.color));
+        marker.bindPopup(eventPopup(primary.ev, primary.cityName, primary.color, t.weekdays, t.months, t.tagLabels));
       } else {
         const sorted = [...items].sort((a, b) =>
           (a.ev.date + (a.ev.time ?? "")).localeCompare(b.ev.date + (b.ev.time ?? "")),
@@ -561,7 +562,7 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
           <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:${primary.color};font-weight:800;margin-bottom:6px;">${primary.cityName} · ${t.eventsAt(items.length)}</div>
           ${sorted.map(({ ev, color }) => `
             <div style="border-top:1px solid #e5e7eb;padding:6px 0;">
-              <div style="font-size:11px;color:${color};font-weight:700;">${fmtDate(ev.date)}${ev.time ? ` · ${ev.time}` : ""}${ev.tag ? ` · ${ev.tag}` : ""}</div>
+              <div style="font-size:11px;color:${color};font-weight:700;">${fmtDateWith(ev.date, t.weekdays, t.months)}${ev.time ? ` · ${ev.time}` : ""}${ev.tag ? ` · ${t.tagLabels[ev.tag]}` : ""}</div>
               <div style="font-size:13px;font-weight:600;color:#1f1326;line-height:1.25;margin-top:2px;">${ev.title}</div>
               ${ev.location ? `<div style="font-size:11px;color:#6b7280;margin-top:2px;">📍 ${ev.location}</div>` : ""}
             </div>
@@ -645,13 +646,13 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
       <div className="absolute bottom-4 left-4 z-[400] rounded-xl bg-background/95 backdrop-blur px-3 py-2 text-[11px] shadow-lg border border-border">
         <div className="font-bold uppercase tracking-wider text-[10px] mb-1 text-muted-foreground">{t.legendEvents}</div>
         <div className="flex flex-wrap gap-x-3 gap-y-1">
-          {(Object.keys(tagEmoji) as Array<keyof typeof tagEmoji>).map((t) => (
-            <span key={t} className="inline-flex items-center gap-1">
+          {(Object.keys(tagEmoji) as Array<keyof typeof tagEmoji>).map((tag) => (
+            <span key={tag} className="inline-flex items-center gap-1">
               <span
                 className="inline-block h-2.5 w-2.5 rounded-full"
-                style={{ background: tagColor[t] }}
+                style={{ background: tagColor[tag] }}
               />
-              {t}
+              {t.tagLabels[tag]}
             </span>
           ))}
         </div>
