@@ -26,7 +26,7 @@ export const viewingSpots: ViewingSpot[] = [
   {
     id: "s1-nesebar-old-town",
     stageId: 1,
-    coords: [42.6585, 27.7325],
+    coords: [42.6606, 27.7345],
     title: "Старият град в Несебър",
     description:
       "Включително входа и покрай двете църкви. Това е неутралната зона — колоездачите ще минават бавно и могат да бъдат видяни в непосредствена близост.",
@@ -236,7 +236,7 @@ export const viewingSpots: ViewingSpot[] = [
   {
     id: "s2-vratnik",
     stageId: 2,
-    coords: [42.8209, 26.1646],
+    coords: [42.8230, 26.4485],
     title: "Проход „Вратник“ / „Железни врата“",
     description: "Категоризираното изкачване по пътя към Велико Търново.",
     i18n: {
@@ -253,7 +253,7 @@ export const viewingSpots: ViewingSpot[] = [
   {
     id: "s2-byala",
     stageId: 2,
-    coords: [42.7297, 26.1885],
+    coords: [42.7882, 26.4363],
     title: "Бяла",
     description: "Колоната минава през Бяла по главния път.",
     i18n: {
