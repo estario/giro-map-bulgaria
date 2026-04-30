@@ -1,4 +1,4 @@
-export type CityKey = "nesebar" | "burgas" | "veliko-tarnovo" | "plovdiv" | "sofia";
+export type CityKey = "nesebar" | "burgas" | "veliko-tarnovo" | "plovdiv" | "sofia" | "kostenets";
 
 export interface CulturalEvent {
   /** ISO date YYYY-MM-DD */
