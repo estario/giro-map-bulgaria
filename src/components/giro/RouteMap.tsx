@@ -645,6 +645,11 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
         }).addTo(layers);
         for (const p of official.route) allLatLngs.push(p as L.LatLngExpression);
 
+        if (stage.id === 1) {
+          addStage1NeutralRoute(layers, lang);
+          allLatLngs.push(...STAGE1_NEUTRAL_ROUTE);
+        }
+
         // Official KML waypoints (KM markers, exits, POIs) — as a separate, toggleable layer
         if (showOfficial) {
           for (const pt of official.points.filter(shouldRenderOfficialPoint)) {
