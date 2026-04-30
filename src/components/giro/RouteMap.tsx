@@ -25,6 +25,19 @@ function makeIcon(color: string, label: string, offsetX = 0) {
   });
 }
 
+function kmZeroIcon() {
+  return L.divIcon({
+    className: "giro-km-zero-marker",
+    html: `<div style="display:flex;align-items:center;gap:4px;font-family:system-ui,sans-serif;filter:drop-shadow(0 3px 6px rgba(0,0,0,0.35));">
+      <div style="width:14px;height:14px;border-radius:9999px;background:#16a34a;border:3px solid #fff;"></div>
+      <div style="background:#fff;color:#14532d;border:2px solid #16a34a;border-radius:4px;padding:2px 6px;font-size:11px;font-weight:900;line-height:1;white-space:nowrap;">km 0</div>
+    </div>`,
+    iconSize: [58, 22],
+    iconAnchor: [7, 11],
+    popupAnchor: [18, -10],
+  });
+}
+
 // Distinct flag-style marker for stage START — clearly readable on the map
 // so two stages whose start/finish are close (e.g. Stage 1 finish in Burgas
 // and Stage 2 start in Burgas) cannot be confused.
