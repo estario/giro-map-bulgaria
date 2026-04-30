@@ -371,7 +371,7 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
   const [routingCount, setRoutingCount] = useState(0);
   const [showEvents, setShowEvents] = useState(true);
   const [showOfficial, setShowOfficial] = useState(true);
-  const { t } = useT();
+  const { t, lang } = useT();
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
@@ -407,7 +407,7 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
     let cancelled = false;
 
     if (activeStageId === 0 || activeStageId === 1 || activeStageId === 2) {
-    addBurgasReferenceLayers(map, layers, activeStageId, t.closuresPin);
+    addBurgasReferenceLayers(map, layers, activeStageId, t.closuresPin, lang);
       allLatLngs.push([42.4939, 27.477], [42.6587, 27.7307]);
     }
 
@@ -445,8 +445,8 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
             }).addTo(layers);
             m.bindPopup(
               `<div style="font-family:system-ui,sans-serif;min-width:160px;">
-                <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:${stage.color};font-weight:800;">${stage.name} · ${pt.type}</div>
-                <div style="font-size:14px;font-weight:700;margin-top:4px;color:#1f1326;">${pt.name}</div>
+                <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:${stage.color};font-weight:800;">${t.stageN(stage.id)} · ${t.stageTypeLabels[pt.type]}</div>
+                <div style="font-size:14px;font-weight:700;margin-top:4px;color:#1f1326;">${localizePlaceName(pt.name, lang)}</div>
               </div>`,
             );
           }
