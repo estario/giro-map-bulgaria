@@ -519,7 +519,7 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
     return () => {
       cancelled = true;
     };
-  }, [stages, activeStageId, showOfficial]);
+  }, [stages, activeStageId, showOfficial, t]);
 
   // Render cultural / sport event pins
   useEffect(() => {
