@@ -40,8 +40,11 @@ export const stages: Stage[] = [
     distanceKm: 147,
     color: "#ec4899",
     waypoints: [
-      { name: "НЕСЕБЪР старт", totalKm: 0, toFinishKm: 147, raceTime: "13:50", closeTime: "12:20", coords: [42.658712, 27.730648] },
-      { name: "Несебър км0", totalKm: 0, toFinishKm: 147, raceTime: "14:00", closeTime: "12:30", coords: [42.655500, 27.717000] },
+      // Официален Roadbook: Foglio firma / Signature podium на ул. „Хан Крум"
+      // в Стария град — N 42°39'55.8" E 27°42'26.9"
+      { name: "НЕСЕБЪР старт", totalKm: 0, toFinishKm: 147, raceTime: "13:50", closeTime: "12:20", coords: [42.665500, 27.707472] },
+      // KM 0 след неутрален трансфер 4 700 m по I-9 (по посока Равда)
+      { name: "Несебър км0", totalKm: 0, toFinishKm: 147, raceTime: "14:00", closeTime: "12:30", coords: [42.655500, 27.690500] },
       { name: "Равда", road: "I-9", totalKm: 7.8, toFinishKm: 139.2, raceTime: "14:09", closeTime: "12:39", coords: [42.652920, 27.670340] },
       { name: "Ахелой", road: "I-9", totalKm: 11.5, toFinishKm: 135.5, raceTime: "14:14", closeTime: "12:44", coords: [42.645880, 27.636670] },
       { name: "Поморие", road: "I-9", totalKm: 19.2, toFinishKm: 127.8, raceTime: "14:23", closeTime: "12:53", coords: [42.588820, 27.598550] },
