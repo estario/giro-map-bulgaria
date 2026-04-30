@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import { cityPrograms, tagColor, localizeEvent, localizeCityName, type CityKey, type CulturalEvent } from "@/data/events";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
@@ -33,8 +33,6 @@ function groupByDate(events: CulturalEvent[]) {
 export default function CulturalProgram() {
   const [city, setCity] = useState<CityKey>("nesebar");
   const { t, lang } = useT();
-  const program = cityPrograms.find((c) => c.key === city)!;
-  // grouped is computed per-tab below
 
   const totalEvents = cityPrograms.reduce((s, c) => s + c.events.length, 0);
 
