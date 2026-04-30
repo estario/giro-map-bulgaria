@@ -106,9 +106,13 @@ function userIcon() {
 function infoIcon(color: string) {
   return L.divIcon({
     className: "giro-info-marker",
-    html: `<div style="background:${color};color:#fff;border:2px solid #fff;border-radius:9999px;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;box-shadow:0 4px 10px rgba(0,0,0,0.25);font-family:system-ui,sans-serif;">i</div>`,
-    iconSize: [22, 22],
-    iconAnchor: [11, 11],
+    html: `<div style="position:relative;display:flex;flex-direction:column;align-items:center;font-family:system-ui,sans-serif;pointer-events:auto;">
+      <div style="background:${color};color:#fff;border:2px solid #fff;border-radius:9999px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;box-shadow:0 4px 12px rgba(220,38,38,0.55);line-height:1;">🚧</div>
+      <div style="margin-top:2px;background:#fff;color:${color};border:1.5px solid ${color};border-radius:4px;padding:1px 5px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.04em;box-shadow:0 2px 4px rgba(0,0,0,0.2);white-space:nowrap;">Затваряне</div>
+    </div>`,
+    iconSize: [60, 50],
+    iconAnchor: [30, 15],
+    popupAnchor: [0, -15],
   });
 }
 
