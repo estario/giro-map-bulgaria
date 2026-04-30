@@ -144,6 +144,40 @@ function fmtDateWith(iso: string, weekdays: string[], months: string[]) {
   return `${d.getDate()} ${months[d.getMonth()]} (${weekdays[d.getDay()]})`;
 }
 
+const placeLabels: Record<string, Record<Lang, string>> = {
+  "Летище Бургас (Сарафово)": { bg: "Летище Бургас (Сарафово)", en: "Burgas Airport (Sarafovo)", it: "Aeroporto di Burgas (Sarafovo)" },
+  "Велико Търново": { bg: "Велико Търново", en: "Veliko Tarnovo", it: "Veliko Tarnovo" },
+  "Меден рудник": { bg: "Меден рудник", en: "Meden Rudnik", it: "Meden Rudnik" },
+  "Отклонение Малко Търново": { bg: "Отклонение Малко Търново", en: "Malko Tarnovo junction", it: "Bivio Malko Tarnovo" },
+  "Вход трасе": { bg: "Вход трасе", en: "Circuit entrance", it: "Ingresso circuito" },
+  "Изход трасе": { bg: "Изход трасе", en: "Circuit exit", it: "Uscita circuito" },
+  "Св. Тома": { bg: "Св. Тома", en: "St. Thomas", it: "San Tommaso" },
+  "Нос Агалина": { bg: "Нос Агалина", en: "Cape Agalina", it: "Capo Agalina" },
+  "Ветрен": { bg: "Ветрен", en: "Vetren", it: "Vetren" },
+  "Лясково": { bg: "Лясково", en: "Lyaskovo", it: "Lyaskovo" },
+  "Лясковец": { bg: "Лясковец", en: "Lyaskovets", it: "Lyaskovets" },
+  "Манастир Лясковец": { bg: "Манастир Лясковец", en: "Lyaskovets Monastery", it: "Monastero di Lyaskovets" },
+  "Шереметя": { bg: "Шереметя", en: "Sheremetya", it: "Sheremetya" },
+  "Св. Гора": { bg: "Св. Гора", en: "Sveta Gora", it: "Sveta Gora" },
+  "Царевец": { bg: "Царевец", en: "Tsarevets", it: "Tsarevets" },
+  "Пловдив": { bg: "Пловдив", en: "Plovdiv", it: "Plovdiv" },
+  "Несебър": { bg: "Несебър", en: "Nessebar", it: "Nessebar" },
+  "Бургас": { bg: "Бургас", en: "Burgas", it: "Burgas" },
+  "София": { bg: "София", en: "Sofia", it: "Sofia" },
+};
+
+function markerStartLabel(stageId: number, lang: Lang) {
+  if (lang === "en") return `START S${stageId}`;
+  if (lang === "it") return `PARTENZA T${stageId}`;
+  return `СТАРТ Е${stageId}`;
+}
+
+function markerFinishLabel(stageId: number, lang: Lang) {
+  if (lang === "en") return `FINISH S${stageId}`;
+  if (lang === "it") return `ARRIVO T${stageId}`;
+  return `ФИНАЛ Е${stageId}`;
+}
+
 type TagLabels = Record<NonNullable<CulturalEvent["tag"]>, string>;
 
 function eventPopup(ev: CulturalEvent, cityName: string, color: string, weekdays: string[], months: string[], tagLabels: TagLabels) {
