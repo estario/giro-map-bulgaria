@@ -51,6 +51,8 @@ type Dict = {
   passingLabel: string;
   closureLabel: string;
   eventsCount: (n: number) => string;
+  closuresPin: string;
+  eventsAt: (n: number) => string;
 
   // Stage detail
   schedule: string;
@@ -127,6 +129,8 @@ export const T: Record<Lang, Dict> = {
     passingLabel: "Преминаване:",
     closureLabel: "Затваряне:",
     eventsCount: (n) => `${n} събития`,
+    closuresPin: "Затваряне",
+    eventsAt: (n) => `${n} събития`,
     schedule: "График за преминаване",
     place: "Място",
     km: "км",
@@ -196,6 +200,8 @@ export const T: Record<Lang, Dict> = {
     passingLabel: "Passing:",
     closureLabel: "Closure:",
     eventsCount: (n) => `${n} events`,
+    closuresPin: "Closure",
+    eventsAt: (n) => `${n} events`,
     schedule: "Passage schedule",
     place: "Place",
     km: "km",
@@ -265,6 +271,8 @@ export const T: Record<Lang, Dict> = {
     passingLabel: "Passaggio:",
     closureLabel: "Chiusura:",
     eventsCount: (n) => `${n} eventi`,
+    closuresPin: "Chiusura",
+    eventsAt: (n) => `${n} eventi`,
     schedule: "Orari di passaggio",
     place: "Località",
     km: "km",

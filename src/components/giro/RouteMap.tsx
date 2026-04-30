@@ -103,12 +103,12 @@ function userIcon() {
   });
 }
 
-function infoIcon(color: string) {
+function infoIcon(color: string, label: string) {
   return L.divIcon({
     className: "giro-info-marker",
     html: `<div style="position:relative;display:flex;flex-direction:column;align-items:center;font-family:system-ui,sans-serif;pointer-events:auto;">
       <div style="background:${color};color:#fff;border:2px solid #fff;border-radius:9999px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;box-shadow:0 4px 12px rgba(220,38,38,0.55);line-height:1;">🚧</div>
-      <div style="margin-top:2px;background:#fff;color:${color};border:1.5px solid ${color};border-radius:4px;padding:1px 5px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.04em;box-shadow:0 2px 4px rgba(0,0,0,0.2);white-space:nowrap;">Затваряне</div>
+      <div style="margin-top:2px;background:#fff;color:${color};border:1.5px solid ${color};border-radius:4px;padding:1px 5px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.04em;box-shadow:0 2px 4px rgba(0,0,0,0.2);white-space:nowrap;">${label}</div>
     </div>`,
     iconSize: [60, 50],
     iconAnchor: [30, 15],
@@ -191,7 +191,7 @@ function featurePopup(properties: Record<string, unknown>) {
   return `<div style="font-family:system-ui,sans-serif;max-width:260px;"><strong>${name}</strong>${body ? `<div style="margin-top:6px;font-size:12px;color:#4b5563;">${body}</div>` : ""}</div>`;
 }
 
-function addBurgasReferenceLayers(map: L.Map, layers: L.LayerGroup, activeStageId: number) {
+function addBurgasReferenceLayers(map: L.Map, layers: L.LayerGroup, activeStageId: number, closureLabel: string) {
   if (!map.getPane("burgas-detail")) {
     map.createPane("burgas-detail");
     map.getPane("burgas-detail")!.style.zIndex = "450";
@@ -258,7 +258,7 @@ function addBurgasReferenceLayers(map: L.Map, layers: L.LayerGroup, activeStageI
     },
     pointToLayer: (feature, latlng) => {
       const props = (feature?.properties ?? {}) as Record<string, string>;
-      return L.marker(latlng, { icon: infoIcon(props.fill || "#b91c1c") });
+      return L.marker(latlng, { icon: infoIcon(props.fill || "#b91c1c", closureLabel) });
     },
     onEachFeature: (feature, layer) => {
       layer.bindPopup(featurePopup((feature.properties ?? {}) as Record<string, unknown>));
@@ -340,7 +340,7 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
     let cancelled = false;
 
     if (activeStageId === 0 || activeStageId === 1 || activeStageId === 2) {
-    addBurgasReferenceLayers(map, layers, activeStageId);
+    addBurgasReferenceLayers(map, layers, activeStageId, t.closuresPin);
       allLatLngs.push([42.4939, 27.477], [42.6587, 27.7307]);
     }
 
@@ -447,27 +447,67 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
         const popupHtml = isSharedFinish
           ? `
           <div style="font-family:system-ui,sans-serif;min-width:220px;">
-            <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.05em;color:${stage.color};font-weight:700;">🏆 Финал Етап ${stage.id} · ${stage.to}</div>
-            <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.05em;color:${nextStage!.color};font-weight:700;margin-top:2px;">🏁 Старт Етап ${nextStage!.id} · ${nextStage!.from}</div>
-            <div style="font-size:13px;color:#374151;margin-top:8px;line-height:1.35;">Една и съща точка — финалът на етап ${stage.id} и стартът на етап ${nextStage!.id} са на едно и също място.</div>
+            <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.05em;color:${stage.color};font-weight:700;">${t.finishStageN(stage.id)} · ${stage.to}</div>
+            <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.05em;color:${nextStage!.color};font-weight:700;margin-top:2px;">${t.startStageN(nextStage!.id)} · ${nextStage!.from}</div>
+            <div style="font-size:13px;color:#374151;margin-top:8px;line-height:1.35;">${t.sharedPointDesc(stage.id, nextStage!.id)}</div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:8px;font-size:12px;">
-              <div style="color:${stage.color};"><strong>Финал Е${stage.id}:</strong><br/>${wp.raceTime}</div>
-              <div style="color:${nextStage!.color};"><strong>Старт Е${nextStage!.id}:</strong><br/>${nextStage!.waypoints[0].raceTime}</div>
+              <div style="color:${stage.color};"><strong>${t.finishE(stage.id)}</strong><br/>${wp.raceTime}</div>
+              <div style="color:${nextStage!.color};"><strong>${t.startE(nextStage!.id)}</strong><br/>${nextStage!.waypoints[0].raceTime}</div>
             </div>
           </div>`
           : `
           <div style="font-family:system-ui,sans-serif;min-width:200px;">
             <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.05em;color:${stage.color};font-weight:700;">${stage.name} · ${stage.from} → ${stage.to}</div>
             <div style="font-size:15px;font-weight:700;margin:4px 0;color:#1f1326;">${wp.name}</div>
-            ${wp.road ? `<div style="font-size:12px;color:#6b7280;">Път ${wp.road}</div>` : ""}
+            ${wp.road ? `<div style="font-size:12px;color:#6b7280;">${t.road} ${wp.road}</div>` : ""}
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:8px;font-size:12px;">
-              <div><strong>Общо км:</strong><br/>${wp.totalKm}</div>
-              <div><strong>До финал:</strong><br/>${wp.toFinishKm} км</div>
-              <div style="color:${stage.color};"><strong>Преминаване:</strong><br/>${wp.raceTime}</div>
-              <div style="color:#dc2626;"><strong>Затваряне:</strong><br/>${wp.closeTime}</div>
+              <div><strong>${t.totalKmLabel}</strong><br/>${wp.totalKm}</div>
+              <div><strong>${t.toFinishLabel}</strong><br/>${wp.toFinishKm} ${t.kmShort}</div>
+              <div style="color:${stage.color};"><strong>${t.passingLabel}</strong><br/>${wp.raceTime}</div>
+              <div style="color:#dc2626;"><strong>${t.closureLabel}</strong><br/>${wp.closeTime}</div>
             </div>
           </div>`;
         marker.bindPopup(popupHtml);
+      });
+
+      // ===== Closure information pins per city/group from stage.closures =====
+      // Place one 🚧 pin per closure GROUP at the corresponding city center,
+      // with small fan-out offsets so multiple groups in the same city are
+      // distinguishable on the map.
+      const cityCenters: Record<string, [number, number]> = {
+        "несебър": [42.6587, 27.7307],
+        "бургас": [42.5048, 27.4626],
+        "бургас (старт етап 2)": [42.4966, 27.4712],
+        "велико търново": [43.0812, 25.6310],
+        "пловдив": [42.1421, 24.7499],
+        "софия": [42.6939, 23.3325],
+      };
+      stage.closures.forEach((cl, ci) => {
+        const key = cl.city.toLowerCase();
+        const center = cityCenters[key];
+        if (!center) return;
+        cl.groups.forEach((group, gi) => {
+          // fan-out offset (~150–400 m) so multiple pins per city stay readable
+          const angle = ((ci * 3 + gi) * 55) * (Math.PI / 180);
+          const r = 0.0035 + ((ci + gi) % 3) * 0.0018;
+          const lat = center[0] + Math.cos(angle) * r;
+          const lng = center[1] + Math.sin(angle) * r * 1.35;
+          const m = L.marker([lat, lng], {
+            icon: infoIcon("#b91c1c", t.closuresPin),
+            zIndexOffset: 700,
+          }).addTo(layers);
+          const streetsHtml = group.streets
+            .map((s) => `<li style="margin:2px 0;">${s}</li>`)
+            .join("");
+          m.bindPopup(`
+            <div style="font-family:system-ui,sans-serif;max-width:320px;">
+              <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:#b91c1c;font-weight:800;">${t.closuresPin} · ${cl.city}</div>
+              <div style="font-size:13px;font-weight:700;margin:4px 0 6px;color:#1f1326;line-height:1.3;">${group.period}</div>
+              <ul style="font-size:12px;color:#374151;padding-left:16px;margin:0;line-height:1.35;max-height:220px;overflow-y:auto;">${streetsHtml}</ul>
+              ${cl.note ? `<div style="font-size:11px;color:#6b7280;margin-top:6px;font-style:italic;">${cl.note}</div>` : ""}
+            </div>
+          `);
+        });
       });
     });
 
@@ -479,7 +519,7 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
     return () => {
       cancelled = true;
     };
-  }, [stages, activeStageId, showOfficial]);
+  }, [stages, activeStageId, showOfficial, t]);
 
   // Render cultural / sport event pins
   useEffect(() => {
@@ -518,7 +558,7 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
           (a.ev.date + (a.ev.time ?? "")).localeCompare(b.ev.date + (b.ev.time ?? "")),
         );
         const html = `<div style="font-family:system-ui,sans-serif;max-width:300px;max-height:300px;overflow-y:auto;">
-          <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:${primary.color};font-weight:800;margin-bottom:6px;">${primary.cityName} · ${items.length} събития</div>
+          <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:${primary.color};font-weight:800;margin-bottom:6px;">${primary.cityName} · ${t.eventsAt(items.length)}</div>
           ${sorted.map(({ ev, color }) => `
             <div style="border-top:1px solid #e5e7eb;padding:6px 0;">
               <div style="font-size:11px;color:${color};font-weight:700;">${fmtDate(ev.date)}${ev.time ? ` · ${ev.time}` : ""}${ev.tag ? ` · ${ev.tag}` : ""}</div>
@@ -530,7 +570,7 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
         marker.bindPopup(html);
       }
     }
-  }, [showEvents]);
+  }, [showEvents, t]);
 
   const handleLocate = () => {
     if (!navigator.geolocation || !mapRef.current || !userLayerRef.current) return;
