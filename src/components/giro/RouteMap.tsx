@@ -191,7 +191,7 @@ function featurePopup(properties: Record<string, unknown>) {
   return `<div style="font-family:system-ui,sans-serif;max-width:260px;"><strong>${name}</strong>${body ? `<div style="margin-top:6px;font-size:12px;color:#4b5563;">${body}</div>` : ""}</div>`;
 }
 
-function addBurgasReferenceLayers(map: L.Map, layers: L.LayerGroup, activeStageId: number) {
+function addBurgasReferenceLayers(map: L.Map, layers: L.LayerGroup, activeStageId: number, closureLabel: string) {
   if (!map.getPane("burgas-detail")) {
     map.createPane("burgas-detail");
     map.getPane("burgas-detail")!.style.zIndex = "450";
@@ -258,7 +258,7 @@ function addBurgasReferenceLayers(map: L.Map, layers: L.LayerGroup, activeStageI
     },
     pointToLayer: (feature, latlng) => {
       const props = (feature?.properties ?? {}) as Record<string, string>;
-      return L.marker(latlng, { icon: infoIcon(props.fill || "#b91c1c") });
+      return L.marker(latlng, { icon: infoIcon(props.fill || "#b91c1c", closureLabel) });
     },
     onEachFeature: (feature, layer) => {
       layer.bindPopup(featurePopup((feature.properties ?? {}) as Record<string, unknown>));
@@ -340,7 +340,7 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
     let cancelled = false;
 
     if (activeStageId === 0 || activeStageId === 1 || activeStageId === 2) {
-    addBurgasReferenceLayers(map, layers, activeStageId);
+    addBurgasReferenceLayers(map, layers, activeStageId, t.closuresPin);
       allLatLngs.push([42.4939, 27.477], [42.6587, 27.7307]);
     }
 
