@@ -4,8 +4,9 @@ import type { Stage } from "@/data/stages";
 import { burgasUmapLayers } from "@/data/burgasUmap";
 import { cityPrograms, tagColor, localizeEvent, localizeCityName, type CulturalEvent } from "@/data/events";
 import { GIRO_STAGES, type GiroPoint } from "@/data/giroStages";
+import { viewingSpots, localizeViewingSpot } from "@/data/viewingSpots";
 import { Button } from "@/components/ui/button";
-import { LocateFixed, Loader2, Sparkles } from "lucide-react";
+import { LocateFixed, Loader2, Sparkles, Eye } from "lucide-react";
 import { useT } from "@/i18n/LanguageProvider";
 import type { Lang } from "@/i18n/translations";
 
@@ -108,6 +109,21 @@ function infoIcon(color: string, label: string) {
     html: `<div style="position:relative;display:flex;flex-direction:column;align-items:center;font-family:system-ui,sans-serif;pointer-events:auto;">
       <div style="background:${color};color:#fff;border:2px solid #fff;border-radius:9999px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;box-shadow:0 4px 12px rgba(220,38,38,0.55);line-height:1;">🚧</div>
       <div style="margin-top:2px;background:#fff;color:${color};border:1.5px solid ${color};border-radius:4px;padding:1px 5px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.04em;box-shadow:0 2px 4px rgba(0,0,0,0.2);white-space:nowrap;">${label}</div>
+    </div>`,
+    iconSize: [60, 50],
+    iconAnchor: [30, 15],
+    popupAnchor: [0, -15],
+  });
+}
+
+const VIEWING_SPOT_COLOR = "#0d9488"; // teal-600 — distinct from closure red & event purple
+
+function viewingSpotIcon(label: string) {
+  return L.divIcon({
+    className: "giro-viewing-marker",
+    html: `<div style="position:relative;display:flex;flex-direction:column;align-items:center;font-family:system-ui,sans-serif;pointer-events:auto;">
+      <div style="background:${VIEWING_SPOT_COLOR};color:#fff;border:2px solid #fff;border-radius:9999px;width:30px;height:30px;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:800;box-shadow:0 4px 12px rgba(13,148,136,0.55);line-height:1;">👁</div>
+      <div style="margin-top:2px;background:#fff;color:${VIEWING_SPOT_COLOR};border:1.5px solid ${VIEWING_SPOT_COLOR};border-radius:4px;padding:1px 5px;font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:0.04em;box-shadow:0 2px 4px rgba(0,0,0,0.2);white-space:nowrap;">${label}</div>
     </div>`,
     iconSize: [60, 50],
     iconAnchor: [30, 15],
@@ -368,10 +384,12 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
   const layersRef = useRef<L.LayerGroup | null>(null);
   const userLayerRef = useRef<L.LayerGroup | null>(null);
   const eventsLayerRef = useRef<L.LayerGroup | null>(null);
+  const viewingLayerRef = useRef<L.LayerGroup | null>(null);
   const [locating, setLocating] = useState(false);
   const [routingCount, setRoutingCount] = useState(0);
   const [showEvents, setShowEvents] = useState(true);
   const [showOfficial, setShowOfficial] = useState(true);
+  const [showViewing, setShowViewing] = useState(true);
   const { t, lang } = useT();
 
   useEffect(() => {
@@ -390,6 +408,7 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
     layersRef.current = L.layerGroup().addTo(map);
     userLayerRef.current = L.layerGroup().addTo(map);
     eventsLayerRef.current = L.layerGroup().addTo(map);
+    viewingLayerRef.current = L.layerGroup().addTo(map);
 
     return () => {
       map.remove();
@@ -643,6 +662,35 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
     }
   }, [showEvents, t, lang]);
 
+  // Render recommended viewing-spot pins
+  useEffect(() => {
+    const layer = viewingLayerRef.current;
+    if (!layer) return;
+    layer.clearLayers();
+    if (!showViewing) return;
+
+    const visible = viewingSpots.filter(
+      (s) => activeStageId === 0 || s.stageId === activeStageId,
+    );
+    for (const spot of visible) {
+      const stage = stages.find((s) => s.id === spot.stageId);
+      const stageColor = stage?.color ?? VIEWING_SPOT_COLOR;
+      const loc = localizeViewingSpot(spot, lang);
+      const m = L.marker(spot.coords as L.LatLngExpression, {
+        icon: viewingSpotIcon(t.viewingSpotPin),
+        zIndexOffset: 800,
+      }).addTo(layer);
+      m.bindPopup(`
+        <div style="font-family:system-ui,sans-serif;max-width:300px;">
+          <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:${VIEWING_SPOT_COLOR};font-weight:800;">👁 ${t.viewingSpotKicker}</div>
+          <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.05em;color:${stageColor};font-weight:700;margin-top:3px;">${t.stageN(spot.stageId)}</div>
+          <div style="font-size:14px;font-weight:700;margin:4px 0 6px;color:#1f1326;line-height:1.3;">${loc.title}</div>
+          ${loc.description ? `<div style="font-size:12px;color:#374151;line-height:1.4;">${loc.description}</div>` : ""}
+        </div>
+      `);
+    }
+  }, [showViewing, activeStageId, stages, t, lang]);
+
   const handleLocate = () => {
     if (!navigator.geolocation || !mapRef.current || !userLayerRef.current) return;
     setLocating(true);
@@ -704,6 +752,15 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
           <span className="ml-2">{showEvents ? t.hideEvents : t.showEvents}</span>
         </Button>
         <Button
+          onClick={() => setShowViewing((v) => !v)}
+          size="sm"
+          variant={showViewing ? "default" : "secondary"}
+          className="shadow-lg"
+        >
+          <Eye className="h-4 w-4" />
+          <span className="ml-2">{showViewing ? t.hideViewingSpots : t.showViewingSpots}</span>
+        </Button>
+        <Button
           onClick={() => setShowOfficial((v) => !v)}
           size="sm"
           variant={showOfficial ? "default" : "secondary"}
@@ -725,6 +782,13 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
               {t.tagLabels[tag]}
             </span>
           ))}
+          <span className="inline-flex items-center gap-1">
+            <span
+              className="inline-block h-2.5 w-2.5 rounded-full"
+              style={{ background: VIEWING_SPOT_COLOR }}
+            />
+            👁 {t.legendViewingSpot}
+          </span>
         </div>
       </div>
       <style>{`@keyframes giroPulse{0%{transform:scale(0.6);opacity:0.8}100%{transform:scale(2.2);opacity:0}}`}</style>
