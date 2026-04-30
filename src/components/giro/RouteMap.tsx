@@ -367,7 +367,7 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
 
         // Official KML waypoints (KM markers, exits, POIs) — as a separate, toggleable layer
         if (showOfficial) {
-          for (const pt of official.points) {
+          for (const pt of official.points.filter(shouldRenderOfficialPoint)) {
             const m = L.marker([pt.lat, pt.lng], {
               icon: officialPointIcon(pt.type),
               zIndexOffset: pt.type === "start" || pt.type === "redbull" || pt.type === "halfway" ? 600 : 200,
