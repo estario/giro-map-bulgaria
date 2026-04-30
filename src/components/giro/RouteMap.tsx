@@ -728,6 +728,8 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
 
         const icon = isSharedFinish
           ? combinedFinishStartIcon(stage.color, nextStage!.color, markerFinishLabel(stage.id, lang), markerStartLabel(nextStage!.id, lang), localizePlaceName(stage.to, lang))
+          : wp.name.toLowerCase().includes("км0")
+            ? kmZeroIcon()
           : isStart
             ? startFlagIcon(stage.color, markerStartLabel(stage.id, lang), localizePlaceName(stage.from, lang))
             : isFinish
