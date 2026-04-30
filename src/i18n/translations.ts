@@ -53,6 +53,11 @@ type Dict = {
   eventsCount: (n: number) => string;
   closuresPin: string;
   eventsAt: (n: number) => string;
+  viewingSpotPin: string;
+  viewingSpotKicker: string;
+  hideViewingSpots: string;
+  showViewingSpots: string;
+  legendViewingSpot: string;
   stageTypeLabels: {
     km: string;
     halfway: string;
