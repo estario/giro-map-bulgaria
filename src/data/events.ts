@@ -207,3 +207,21 @@ export const tagColor: Record<NonNullable<CulturalEvent["tag"]>, string> = {
   "детско": "#10B981",
   "церемония": "#EF4444",
 };
+
+/** Returns title/location/description in the requested language, falling back to BG. */
+export function localizeEvent(ev: CulturalEvent, lang: "bg" | EventLang) {
+  if (lang === "bg") {
+    return { title: ev.title, location: ev.location, description: ev.description };
+  }
+  const tr = ev.i18n?.[lang];
+  return {
+    title: tr?.title ?? ev.title,
+    location: tr?.location ?? ev.location,
+    description: tr?.description ?? ev.description,
+  };
+}
+
+export function localizeCityName(city: CityProgram, lang: "bg" | EventLang) {
+  if (lang === "bg") return city.name;
+  return city.nameI18n?.[lang] ?? city.name;
+}
