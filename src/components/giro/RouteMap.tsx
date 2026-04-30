@@ -212,10 +212,10 @@ function localizeClosureText(text: string, lang: Lang) {
 
 type TagLabels = Record<NonNullable<CulturalEvent["tag"]>, string>;
 
-function eventPopup(ev: CulturalEvent, cityName: string, color: string, weekdays: string[], months: string[], tagLabels: TagLabels) {
+function eventPopup(ev: CulturalEvent, cityName: string, color: string, weekdays: string[], months: string[], tagLabels: TagLabels, lang: Lang) {
   const tagText = ev.tag ? tagLabels[ev.tag] : "";
   return `<div style="font-family:system-ui,sans-serif;max-width:280px;">
-    <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:${color};font-weight:800;">${cityName}${tagText ? ` · ${tagText}` : ""}</div>
+    <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:${color};font-weight:800;">${localizePlaceName(cityName, lang)}${tagText ? ` · ${tagText}` : ""}</div>
     <div style="font-size:14px;font-weight:700;margin:4px 0 6px;color:#1f1326;line-height:1.25;">${ev.title}</div>
     <div style="font-size:12px;color:#374151;display:flex;flex-direction:column;gap:3px;">
       <div>📅 <strong>${fmtDateWith(ev.date, weekdays, months)}</strong>${ev.time ? ` · ${ev.time}` : ""}</div>
@@ -619,13 +619,13 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
       }).addTo(layer);
 
       if (items.length === 1) {
-        marker.bindPopup(eventPopup(primary.ev, primary.cityName, primary.color, t.weekdays, t.months, t.tagLabels));
+        marker.bindPopup(eventPopup(primary.ev, primary.cityName, primary.color, t.weekdays, t.months, t.tagLabels, lang));
       } else {
         const sorted = [...items].sort((a, b) =>
           (a.ev.date + (a.ev.time ?? "")).localeCompare(b.ev.date + (b.ev.time ?? "")),
         );
         const html = `<div style="font-family:system-ui,sans-serif;max-width:300px;max-height:300px;overflow-y:auto;">
-          <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:${primary.color};font-weight:800;margin-bottom:6px;">${primary.cityName} · ${t.eventsAt(items.length)}</div>
+          <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:${primary.color};font-weight:800;margin-bottom:6px;">${localizePlaceName(primary.cityName, lang)} · ${t.eventsAt(items.length)}</div>
           ${sorted.map(({ ev, color }) => `
             <div style="border-top:1px solid #e5e7eb;padding:6px 0;">
               <div style="font-size:11px;color:${color};font-weight:700;">${fmtDateWith(ev.date, t.weekdays, t.months)}${ev.time ? ` · ${ev.time}` : ""}${ev.tag ? ` · ${t.tagLabels[ev.tag]}` : ""}</div>
@@ -637,7 +637,7 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
         marker.bindPopup(html);
       }
     }
-  }, [showEvents, t]);
+  }, [showEvents, t, lang]);
 
   const handleLocate = () => {
     if (!navigator.geolocation || !mapRef.current || !userLayerRef.current) return;
