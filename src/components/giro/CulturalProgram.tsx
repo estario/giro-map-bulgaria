@@ -104,7 +104,7 @@ function DayBlock({ date, events }: { date: string; events: CulturalEvent[] }) {
 }
 
 function EventCard({ event }: { event: CulturalEvent }) {
-  const { lang } = useT();
+  const { lang, t } = useT();
   const loc = localizeEvent(event, lang);
   const color = event.tag ? tagColor[event.tag] : "var(--rosa-deep)";
   return (
@@ -125,7 +125,7 @@ function EventCard({ event }: { event: CulturalEvent }) {
               )}
               {event.tag && (
                 <Badge variant="secondary" className="capitalize text-[10px] px-2 py-0">
-                  {(useT().t.tagLabels as Record<string, string>)[event.tag] ?? event.tag}
+                  {(t.tagLabels as Record<string, string>)[event.tag] ?? event.tag}
                 </Badge>
               )}
             </div>
