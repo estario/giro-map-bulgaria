@@ -7,6 +7,7 @@ import { GIRO_STAGES, type GiroPoint } from "@/data/giroStages";
 import { Button } from "@/components/ui/button";
 import { LocateFixed, Loader2, Sparkles } from "lucide-react";
 import { useT } from "@/i18n/LanguageProvider";
+import type { Lang } from "@/i18n/translations";
 
 type Props = {
   stages: Stage[];
@@ -26,8 +27,7 @@ function makeIcon(color: string, label: string, offsetX = 0) {
 // Distinct flag-style marker for stage START — clearly readable on the map
 // so two stages whose start/finish are close (e.g. Stage 1 finish in Burgas
 // and Stage 2 start in Burgas) cannot be confused.
-function startFlagIcon(color: string, stageId: number, city: string, offsetX = 0) {
-  const label = `СТАРТ Е${stageId}`;
+function startFlagIcon(color: string, label: string, city: string, offsetX = 0) {
   return L.divIcon({
     className: "giro-start-marker",
     html: `<div style="position:relative;display:flex;flex-direction:column;align-items:flex-start;font-family:system-ui,sans-serif;pointer-events:auto;transform:translateX(${offsetX}px);">
@@ -44,7 +44,7 @@ function startFlagIcon(color: string, stageId: number, city: string, offsetX = 0
 }
 
 function finishFlagIcon(color: string, stageId: number, city: string, offsetX = 0) {
-  const label = `ФИНАЛ Е${stageId}`;
+function finishFlagIcon(color: string, label: string, city: string, offsetX = 0) {
   return L.divIcon({
     className: "giro-finish-marker",
     html: `<div style="position:relative;display:flex;flex-direction:column;align-items:flex-start;font-family:system-ui,sans-serif;pointer-events:auto;transform:translateX(${offsetX}px);">
