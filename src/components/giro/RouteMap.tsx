@@ -251,13 +251,14 @@ function officialPointIcon(type: GiroPoint["type"]) {
   });
 }
 
-function featurePopup(properties: Record<string, unknown>) {
-  const name = String(properties.name ?? "Детайл от картата");
-  const body = String(properties.description ?? properties.Съдържание ?? "");
+function featurePopup(properties: Record<string, unknown>, lang: Lang) {
+  const fallback = lang === "bg" ? "Детайл от картата" : lang === "en" ? "Map detail" : "Dettaglio mappa";
+  const name = localizeClosureText(String(properties.name ?? fallback), lang);
+  const body = localizeClosureText(String(properties.description ?? properties.Съдържание ?? ""), lang);
   return `<div style="font-family:system-ui,sans-serif;max-width:260px;"><strong>${name}</strong>${body ? `<div style="margin-top:6px;font-size:12px;color:#4b5563;">${body}</div>` : ""}</div>`;
 }
 
-function addBurgasReferenceLayers(map: L.Map, layers: L.LayerGroup, activeStageId: number, closureLabel: string) {
+function addBurgasReferenceLayers(map: L.Map, layers: L.LayerGroup, activeStageId: number, closureLabel: string, lang: Lang) {
   if (!map.getPane("burgas-detail")) {
     map.createPane("burgas-detail");
     map.getPane("burgas-detail")!.style.zIndex = "450";
@@ -306,7 +307,7 @@ function addBurgasReferenceLayers(map: L.Map, layers: L.LayerGroup, activeStageI
     },
     pointToLayer: (_feature, latlng) => L.marker(latlng, { icon: makeIcon("#ec4899", "G") }),
     onEachFeature: (feature, layer) => {
-      layer.bindPopup(featurePopup((feature.properties ?? {}) as Record<string, unknown>));
+      layer.bindPopup(featurePopup((feature.properties ?? {}) as Record<string, unknown>, lang));
     },
   }).addTo(layers);
 
@@ -327,7 +328,7 @@ function addBurgasReferenceLayers(map: L.Map, layers: L.LayerGroup, activeStageI
       return L.marker(latlng, { icon: infoIcon(props.fill || "#b91c1c", closureLabel) });
     },
     onEachFeature: (feature, layer) => {
-      layer.bindPopup(featurePopup((feature.properties ?? {}) as Record<string, unknown>));
+      layer.bindPopup(featurePopup((feature.properties ?? {}) as Record<string, unknown>, lang));
     },
   }).addTo(layers);
 }
