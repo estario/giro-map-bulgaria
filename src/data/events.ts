@@ -38,6 +38,7 @@ export const cityPrograms: CityProgram[] = [
   {
     key: "nesebar",
     name: "Несебър",
+    nameI18n: { en: "Nessebar", it: "Nessebar" },
     color: "#E91E63",
     events: [
       { date: "2026-04-25", time: "12:00", title: "Велоекспо и творческа работилница за плакати", tag: "култура", i18n: { en: { title: "Bike expo and creative poster workshop" }, it: { title: "Bike expo e laboratorio creativo di poster" } } },
@@ -59,6 +60,7 @@ export const cityPrograms: CityProgram[] = [
   {
     key: "burgas",
     name: "Бургас",
+    nameI18n: { en: "Burgas", it: "Burgas" },
     color: "#E91E63",
     events: [
       { date: "2026-05-01", time: "11:00", title: "Официално откриване на Националната изложба „Флора Бургас“ — 41-во издание", location: "Експозиционен център „Флора“", tag: "изложба", coords: [42.4954, 27.4773], i18n: { en: { title: "Official opening of the 'Flora Burgas' National Flower Show — 41st edition", location: "Flora Exhibition Centre" }, it: { title: "Inaugurazione ufficiale della mostra nazionale dei fiori 'Flora Burgas' — 41ª edizione", location: "Centro espositivo Flora" } } },
@@ -104,6 +106,7 @@ export const cityPrograms: CityProgram[] = [
   {
     key: "veliko-tarnovo",
     name: "Велико Търново",
+    nameI18n: { en: "Veliko Tarnovo", it: "Veliko Tarnovo" },
     color: "#E91E63",
     events: [
       { date: "2026-05-08", time: "12:00 – 18:00", title: "Етап 1 (Несебър – Бургас) на голям екран", location: "Паметник на Асеневци", tag: "спорт", coords: [43.0827, 25.6505], i18n: { en: { title: "Stage 1 (Nessebar – Burgas) on a big screen", location: "Asenevtsi Monument" }, it: { title: "Tappa 1 (Nessebar – Burgas) sul maxischermo", location: "Monumento agli Asen" } } },
@@ -124,6 +127,7 @@ export const cityPrograms: CityProgram[] = [
   {
     key: "plovdiv",
     name: "Пловдив",
+    nameI18n: { en: "Plovdiv", it: "Plovdiv" },
     color: "#E91E63",
     events: [
       { date: "2026-05-05", title: "Пловдив посреща Giro — художествено осветление в цветовете на Giro (Античен театър, Римски стадион, Стария град, Капана)", tag: "култура", coords: [42.1465, 24.7536], i18n: { en: { title: "Plovdiv welcomes the Giro — artistic lighting in Giro colours (Ancient Theatre, Roman Stadium, Old Town, Kapana)" }, it: { title: "Plovdiv accoglie il Giro — illuminazione artistica nei colori del Giro (Teatro antico, Stadio romano, Città vecchia, Kapana)" } } },
@@ -140,6 +144,7 @@ export const cityPrograms: CityProgram[] = [
   {
     key: "sofia",
     name: "София",
+    nameI18n: { en: "Sofia", it: "Sofia" },
     color: "#E91E63",
     events: [
       { date: "2026-04-25", time: "11:00", title: "Велошествие „Мама, татко и аз на Giro“", location: "парк „Св. Никола“ → парк „Възраждане“", tag: "детско", coords: [42.704, 23.312], i18n: { en: { title: "'Mum, Dad and Me at the Giro' bike parade", location: "Sveti Nikola Park → Vazrazhdane Park" }, it: { title: "Sfilata in bici 'Mamma, papà ed io al Giro'", location: "Parco Sveti Nikola → Parco Vazrazhdane" } } },
@@ -182,6 +187,7 @@ export const cityPrograms: CityProgram[] = [
   {
     key: "kostenets",
     name: "Костенец",
+    nameI18n: { en: "Kostenets", it: "Kostenets" },
     color: "#E91E63",
     events: [
       { date: "2026-05-10", time: "12:00", title: "DJ", location: "ул. „Търговска“ (при надписа „КОСТЕНЕЦ“) — комплекс „Пегас“", tag: "концерт", coords: [42.279, 23.853], i18n: { en: { title: "DJ", location: "Targovska St. (at the 'KOSTENETS' sign) — 'Pegas' complex" }, it: { title: "DJ", location: "via Targovska (al cartello 'KOSTENETS') — complesso 'Pegas'" } } },
