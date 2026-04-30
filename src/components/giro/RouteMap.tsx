@@ -192,6 +192,24 @@ function localizePlaceName(name: string, lang: Lang) {
   return text;
 }
 
+function localizeClosureText(text: string, lang: Lang) {
+  if (lang === "bg") return text;
+  let result = localizePlaceName(text, lang);
+  const replacements: Array<[RegExp, string]> = lang === "en"
+    ? [
+        [/ч\. на/gi, "on"], [/ч\./gi, ""], [/път при/gi, "Road at"], [/ул\./gi, "St."], [/бул\./gi, "Blvd."], [/пл\./gi, "Sq."],
+        [/затворено за движение/gi, "closed to traffic"], [/пълно затваряне на движението/gi, "full traffic closure"], [/забрана за паркиране/gi, "parking ban"], [/забрана за престой и паркиране/gi, "stopping and parking ban"], [/забрана за влизане на МПС/gi, "vehicle entry ban"],
+        [/преминаване на колоната/gi, "peloton passage"], [/технически дейности по трасето/gi, "technical work on the route"], [/цялото трасе на финала/gi, "the full finish route"], [/само за градски транспорт/gi, "public transport only"], [/финиш/gi, "finish"], [/старт/gi, "start"], [/в зоната на/gi, "in the area of"], [/северно от/gi, "north of"], [/в двете посоки/gi, "both directions"], [/отклонение/gi, "junction"], [/при/gi, "at"], [/от/gi, "from"], [/на/gi, "on"],
+      ]
+    : [
+        [/ч\. на/gi, "del"], [/ч\./gi, ""], [/път при/gi, "Strada presso"], [/ул\./gi, "Via"], [/бул\./gi, "Viale"], [/пл\./gi, "Piazza"],
+        [/затворено за движение/gi, "chiusa al traffico"], [/пълно затваряне на движението/gi, "chiusura totale al traffico"], [/забрана за паркиране/gi, "divieto di parcheggio"], [/забрана за престой и паркиране/gi, "divieto di sosta e parcheggio"], [/забрана за влизане на МПС/gi, "divieto di accesso ai veicoli"],
+        [/преминаване на колоната/gi, "passaggio del gruppo"], [/технически дейности по трасето/gi, "lavori tecnici sul percorso"], [/цялото трасе на финала/gi, "tutto il percorso di arrivo"], [/само за градски транспорт/gi, "solo trasporto pubblico"], [/финиш/gi, "arrivo"], [/старт/gi, "partenza"], [/в зоната на/gi, "nell'area di"], [/северно от/gi, "a nord di"], [/в двете посоки/gi, "in entrambe le direzioni"], [/отклонение/gi, "bivio"], [/при/gi, "presso"], [/от/gi, "dalle"], [/на/gi, "il"],
+      ];
+  for (const [pattern, replacement] of replacements) result = result.replace(pattern, replacement);
+  return result.replace(/\s{2,}/g, " ").trim();
+}
+
 type TagLabels = Record<NonNullable<CulturalEvent["tag"]>, string>;
 
 function eventPopup(ev: CulturalEvent, cityName: string, color: string, weekdays: string[], months: string[], tagLabels: TagLabels) {
