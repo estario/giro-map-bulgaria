@@ -7,6 +7,7 @@ import { GIRO_STAGES, type GiroPoint } from "@/data/giroStages";
 import { Button } from "@/components/ui/button";
 import { LocateFixed, Loader2, Sparkles } from "lucide-react";
 import { useT } from "@/i18n/LanguageProvider";
+import type { Lang } from "@/i18n/translations";
 
 type Props = {
   stages: Stage[];
@@ -26,8 +27,7 @@ function makeIcon(color: string, label: string, offsetX = 0) {
 // Distinct flag-style marker for stage START — clearly readable on the map
 // so two stages whose start/finish are close (e.g. Stage 1 finish in Burgas
 // and Stage 2 start in Burgas) cannot be confused.
-function startFlagIcon(color: string, stageId: number, city: string, offsetX = 0) {
-  const label = `СТАРТ Е${stageId}`;
+function startFlagIcon(color: string, label: string, city: string, offsetX = 0) {
   return L.divIcon({
     className: "giro-start-marker",
     html: `<div style="position:relative;display:flex;flex-direction:column;align-items:flex-start;font-family:system-ui,sans-serif;pointer-events:auto;transform:translateX(${offsetX}px);">
@@ -43,8 +43,7 @@ function startFlagIcon(color: string, stageId: number, city: string, offsetX = 0
   });
 }
 
-function finishFlagIcon(color: string, stageId: number, city: string, offsetX = 0) {
-  const label = `ФИНАЛ Е${stageId}`;
+function finishFlagIcon(color: string, label: string, city: string, offsetX = 0) {
   return L.divIcon({
     className: "giro-finish-marker",
     html: `<div style="position:relative;display:flex;flex-direction:column;align-items:flex-start;font-family:system-ui,sans-serif;pointer-events:auto;transform:translateX(${offsetX}px);">
@@ -67,8 +66,8 @@ function finishFlagIcon(color: string, stageId: number, city: string, offsetX = 
 function combinedFinishStartIcon(
   finishColor: string,
   startColor: string,
-  finishStageId: number,
-  startStageId: number,
+  finishLabel: string,
+  startLabel: string,
   city: string,
 ) {
   return L.divIcon({
@@ -76,10 +75,10 @@ function combinedFinishStartIcon(
     html: `<div style="position:relative;display:flex;flex-direction:column;align-items:flex-start;font-family:system-ui,sans-serif;pointer-events:auto;">
       <div style="display:flex;flex-direction:column;gap:2px;">
         <div style="background:#fff;color:${finishColor};padding:3px 8px;border:2px solid ${finishColor};border-bottom-width:1px;border-radius:6px 6px 2px 2px;font-size:11px;font-weight:800;letter-spacing:0.03em;box-shadow:0 4px 12px rgba(0,0,0,0.3);white-space:nowrap;line-height:1.1;">
-          🏆 ФИНАЛ Е${finishStageId}
+          🏆 ${finishLabel}
         </div>
         <div style="background:${startColor};color:#fff;padding:3px 8px;border:2px solid ${startColor};border-top-width:1px;border-radius:2px 2px 6px 6px;font-size:11px;font-weight:800;letter-spacing:0.03em;box-shadow:0 4px 12px rgba(0,0,0,0.4);white-space:nowrap;line-height:1.1;">
-          🏁 СТАРТ Е${startStageId}<span style="opacity:0.9;font-weight:600;margin-left:4px;">· ${city}</span>
+          🏁 ${startLabel}<span style="opacity:0.9;font-weight:600;margin-left:4px;">· ${city}</span>
         </div>
       </div>
       <div style="width:3px;height:18px;background:${startColor};margin-left:6px;box-shadow:0 2px 4px rgba(0,0,0,0.3);"></div>
@@ -145,12 +144,78 @@ function fmtDateWith(iso: string, weekdays: string[], months: string[]) {
   return `${d.getDate()} ${months[d.getMonth()]} (${weekdays[d.getDay()]})`;
 }
 
+const placeLabels: Record<string, Record<Lang, string>> = {
+  "Летище Бургас (Сарафово)": { bg: "Летище Бургас (Сарафово)", en: "Burgas Airport (Sarafovo)", it: "Aeroporto di Burgas (Sarafovo)" },
+  "Велико Търново": { bg: "Велико Търново", en: "Veliko Tarnovo", it: "Veliko Tarnovo" },
+  "Меден рудник": { bg: "Меден рудник", en: "Meden Rudnik", it: "Meden Rudnik" },
+  "Отклонение Малко Търново": { bg: "Отклонение Малко Търново", en: "Malko Tarnovo junction", it: "Bivio Malko Tarnovo" },
+  "Вход трасе": { bg: "Вход трасе", en: "Circuit entrance", it: "Ingresso circuito" },
+  "Изход трасе": { bg: "Изход трасе", en: "Circuit exit", it: "Uscita circuito" },
+  "Св. Тома": { bg: "Св. Тома", en: "St. Thomas", it: "San Tommaso" },
+  "Нос Агалина": { bg: "Нос Агалина", en: "Cape Agalina", it: "Capo Agalina" },
+  "Ветрен": { bg: "Ветрен", en: "Vetren", it: "Vetren" },
+  "Лясково": { bg: "Лясково", en: "Lyaskovo", it: "Lyaskovo" },
+  "Лясковец": { bg: "Лясковец", en: "Lyaskovets", it: "Lyaskovets" },
+  "Манастир Лясковец": { bg: "Манастир Лясковец", en: "Lyaskovets Monastery", it: "Monastero di Lyaskovets" },
+  "Шереметя": { bg: "Шереметя", en: "Sheremetya", it: "Sheremetya" },
+  "Св. Гора": { bg: "Св. Гора", en: "Sveta Gora", it: "Sveta Gora" },
+  "Царевец": { bg: "Царевец", en: "Tsarevets", it: "Tsarevets" },
+  "Пловдив": { bg: "Пловдив", en: "Plovdiv", it: "Plovdiv" },
+  "Несебър": { bg: "Несебър", en: "Nessebar", it: "Nessebar" },
+  "Бургас": { bg: "Бургас", en: "Burgas", it: "Burgas" },
+  "София": { bg: "София", en: "Sofia", it: "Sofia" },
+};
+
+function markerStartLabel(stageId: number, lang: Lang) {
+  if (lang === "en") return `START S${stageId}`;
+  if (lang === "it") return `PARTENZA T${stageId}`;
+  return `СТАРТ Е${stageId}`;
+}
+
+function markerFinishLabel(stageId: number, lang: Lang) {
+  if (lang === "en") return `FINISH S${stageId}`;
+  if (lang === "it") return `ARRIVO T${stageId}`;
+  return `ФИНАЛ Е${stageId}`;
+}
+
+function localizePlaceName(name: string, lang: Lang) {
+  if (lang === "bg") return name;
+  let text = name;
+  for (const [bgName, labels] of Object.entries(placeLabels).sort((a, b) => b[0].length - a[0].length)) {
+    text = text.replaceAll(bgName, labels[lang]);
+    text = text.replaceAll(bgName.toUpperCase(), labels[lang].toUpperCase());
+  }
+  const replacements: Array<[RegExp, string]> = lang === "en"
+    ? [[/старт/gi, "start"], [/финал/gi, "finish"], [/км/gi, "km"], [/вход/gi, "entrance"], [/изход/gi, "exit"], [/разклон/gi, "junction"], [/втора обиколка|2-ра обиколка/gi, "second lap"], [/връщане/gi, "return"], [/етап/gi, "stage"]]
+    : [[/старт/gi, "partenza"], [/финал/gi, "arrivo"], [/км/gi, "km"], [/вход/gi, "ingresso"], [/изход/gi, "uscita"], [/разклон/gi, "bivio"], [/втора обиколка|2-ра обиколка/gi, "secondo giro"], [/връщане/gi, "ritorno"], [/етап/gi, "tappa"]];
+  for (const [pattern, replacement] of replacements) text = text.replace(pattern, replacement);
+  return text;
+}
+
+function localizeClosureText(text: string, lang: Lang) {
+  if (lang === "bg") return text;
+  let result = localizePlaceName(text, lang);
+  const replacements: Array<[RegExp, string]> = lang === "en"
+    ? [
+        [/ч\. на/gi, "on"], [/ч\./gi, ""], [/път при/gi, "Road at"], [/ул\./gi, "St."], [/бул\./gi, "Blvd."], [/пл\./gi, "Sq."],
+        [/затворено за движение/gi, "closed to traffic"], [/пълно затваряне на движението/gi, "full traffic closure"], [/забрана за паркиране/gi, "parking ban"], [/забрана за престой и паркиране/gi, "stopping and parking ban"], [/забрана за влизане на МПС/gi, "vehicle entry ban"],
+        [/преминаване на колоната/gi, "peloton passage"], [/технически дейности по трасето/gi, "technical work on the route"], [/цялото трасе на финала/gi, "the full finish route"], [/само за градски транспорт/gi, "public transport only"], [/финиш/gi, "finish"], [/старт/gi, "start"], [/в зоната на/gi, "in the area of"], [/северно от/gi, "north of"], [/в двете посоки/gi, "both directions"], [/отклонение/gi, "junction"], [/при/gi, "at"], [/от/gi, "from"], [/на/gi, "on"],
+      ]
+    : [
+        [/ч\. на/gi, "del"], [/ч\./gi, ""], [/път при/gi, "Strada presso"], [/ул\./gi, "Via"], [/бул\./gi, "Viale"], [/пл\./gi, "Piazza"],
+        [/затворено за движение/gi, "chiusa al traffico"], [/пълно затваряне на движението/gi, "chiusura totale al traffico"], [/забрана за паркиране/gi, "divieto di parcheggio"], [/забрана за престой и паркиране/gi, "divieto di sosta e parcheggio"], [/забрана за влизане на МПС/gi, "divieto di accesso ai veicoli"],
+        [/преминаване на колоната/gi, "passaggio del gruppo"], [/технически дейности по трасето/gi, "lavori tecnici sul percorso"], [/цялото трасе на финала/gi, "tutto il percorso di arrivo"], [/само за градски транспорт/gi, "solo trasporto pubblico"], [/финиш/gi, "arrivo"], [/старт/gi, "partenza"], [/в зоната на/gi, "nell'area di"], [/северно от/gi, "a nord di"], [/в двете посоки/gi, "in entrambe le direzioni"], [/отклонение/gi, "bivio"], [/при/gi, "presso"], [/от/gi, "dalle"], [/на/gi, "il"],
+      ];
+  for (const [pattern, replacement] of replacements) result = result.replace(pattern, replacement);
+  return result.replace(/\s{2,}/g, " ").trim();
+}
+
 type TagLabels = Record<NonNullable<CulturalEvent["tag"]>, string>;
 
-function eventPopup(ev: CulturalEvent, cityName: string, color: string, weekdays: string[], months: string[], tagLabels: TagLabels) {
+function eventPopup(ev: CulturalEvent, cityName: string, color: string, weekdays: string[], months: string[], tagLabels: TagLabels, lang: Lang) {
   const tagText = ev.tag ? tagLabels[ev.tag] : "";
   return `<div style="font-family:system-ui,sans-serif;max-width:280px;">
-    <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:${color};font-weight:800;">${cityName}${tagText ? ` · ${tagText}` : ""}</div>
+    <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:${color};font-weight:800;">${localizePlaceName(cityName, lang)}${tagText ? ` · ${tagText}` : ""}</div>
     <div style="font-size:14px;font-weight:700;margin:4px 0 6px;color:#1f1326;line-height:1.25;">${ev.title}</div>
     <div style="font-size:12px;color:#374151;display:flex;flex-direction:column;gap:3px;">
       <div>📅 <strong>${fmtDateWith(ev.date, weekdays, months)}</strong>${ev.time ? ` · ${ev.time}` : ""}</div>
@@ -186,13 +251,14 @@ function officialPointIcon(type: GiroPoint["type"]) {
   });
 }
 
-function featurePopup(properties: Record<string, unknown>) {
-  const name = String(properties.name ?? "Детайл от картата");
-  const body = String(properties.description ?? properties.Съдържание ?? "");
+function featurePopup(properties: Record<string, unknown>, lang: Lang) {
+  const fallback = lang === "bg" ? "Детайл от картата" : lang === "en" ? "Map detail" : "Dettaglio mappa";
+  const name = localizeClosureText(String(properties.name ?? fallback), lang);
+  const body = localizeClosureText(String(properties.description ?? properties.Съдържание ?? ""), lang);
   return `<div style="font-family:system-ui,sans-serif;max-width:260px;"><strong>${name}</strong>${body ? `<div style="margin-top:6px;font-size:12px;color:#4b5563;">${body}</div>` : ""}</div>`;
 }
 
-function addBurgasReferenceLayers(map: L.Map, layers: L.LayerGroup, activeStageId: number, closureLabel: string) {
+function addBurgasReferenceLayers(map: L.Map, layers: L.LayerGroup, activeStageId: number, closureLabel: string, lang: Lang) {
   if (!map.getPane("burgas-detail")) {
     map.createPane("burgas-detail");
     map.getPane("burgas-detail")!.style.zIndex = "450";
@@ -241,7 +307,7 @@ function addBurgasReferenceLayers(map: L.Map, layers: L.LayerGroup, activeStageI
     },
     pointToLayer: (_feature, latlng) => L.marker(latlng, { icon: makeIcon("#ec4899", "G") }),
     onEachFeature: (feature, layer) => {
-      layer.bindPopup(featurePopup((feature.properties ?? {}) as Record<string, unknown>));
+      layer.bindPopup(featurePopup((feature.properties ?? {}) as Record<string, unknown>, lang));
     },
   }).addTo(layers);
 
@@ -262,7 +328,7 @@ function addBurgasReferenceLayers(map: L.Map, layers: L.LayerGroup, activeStageI
       return L.marker(latlng, { icon: infoIcon(props.fill || "#b91c1c", closureLabel) });
     },
     onEachFeature: (feature, layer) => {
-      layer.bindPopup(featurePopup((feature.properties ?? {}) as Record<string, unknown>));
+      layer.bindPopup(featurePopup((feature.properties ?? {}) as Record<string, unknown>, lang));
     },
   }).addTo(layers);
 }
@@ -305,7 +371,7 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
   const [routingCount, setRoutingCount] = useState(0);
   const [showEvents, setShowEvents] = useState(true);
   const [showOfficial, setShowOfficial] = useState(true);
-  const { t } = useT();
+  const { t, lang } = useT();
 
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return;
@@ -341,7 +407,7 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
     let cancelled = false;
 
     if (activeStageId === 0 || activeStageId === 1 || activeStageId === 2) {
-    addBurgasReferenceLayers(map, layers, activeStageId, t.closuresPin);
+    addBurgasReferenceLayers(map, layers, activeStageId, t.closuresPin, lang);
       allLatLngs.push([42.4939, 27.477], [42.6587, 27.7307]);
     }
 
@@ -379,8 +445,8 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
             }).addTo(layers);
             m.bindPopup(
               `<div style="font-family:system-ui,sans-serif;min-width:160px;">
-                <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:${stage.color};font-weight:800;">${stage.name} · ${pt.type}</div>
-                <div style="font-size:14px;font-weight:700;margin-top:4px;color:#1f1326;">${pt.name}</div>
+                <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:${stage.color};font-weight:800;">${t.stageN(stage.id)} · ${t.stageTypeLabels[pt.type]}</div>
+                <div style="font-size:14px;font-weight:700;margin-top:4px;color:#1f1326;">${localizePlaceName(pt.name, lang)}</div>
               </div>`,
             );
           }
@@ -434,11 +500,11 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
         if (isSharedStartSkip) return;
 
         const icon = isSharedFinish
-          ? combinedFinishStartIcon(stage.color, nextStage!.color, stage.id, nextStage!.id, stage.to)
+          ? combinedFinishStartIcon(stage.color, nextStage!.color, markerFinishLabel(stage.id, lang), markerStartLabel(nextStage!.id, lang), localizePlaceName(stage.to, lang))
           : isStart
-            ? startFlagIcon(stage.color, stage.id, stage.from)
+            ? startFlagIcon(stage.color, markerStartLabel(stage.id, lang), localizePlaceName(stage.from, lang))
             : isFinish
-              ? finishFlagIcon(stage.color, stage.id, stage.to)
+              ? finishFlagIcon(stage.color, markerFinishLabel(stage.id, lang), localizePlaceName(stage.to, lang))
               : makeIcon(stage.color, `${stage.id}`);
         const marker = L.marker(wp.coords as L.LatLngExpression, {
           icon,
@@ -448,8 +514,8 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
         const popupHtml = isSharedFinish
           ? `
           <div style="font-family:system-ui,sans-serif;min-width:220px;">
-            <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.05em;color:${stage.color};font-weight:700;">${t.finishStageN(stage.id)} · ${stage.to}</div>
-            <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.05em;color:${nextStage!.color};font-weight:700;margin-top:2px;">${t.startStageN(nextStage!.id)} · ${nextStage!.from}</div>
+            <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.05em;color:${stage.color};font-weight:700;">${t.finishStageN(stage.id)} · ${localizePlaceName(stage.to, lang)}</div>
+            <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.05em;color:${nextStage!.color};font-weight:700;margin-top:2px;">${t.startStageN(nextStage!.id)} · ${localizePlaceName(nextStage!.from, lang)}</div>
             <div style="font-size:13px;color:#374151;margin-top:8px;line-height:1.35;">${t.sharedPointDesc(stage.id, nextStage!.id)}</div>
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:8px;font-size:12px;">
               <div style="color:${stage.color};"><strong>${t.finishE(stage.id)}</strong><br/>${wp.raceTime}</div>
@@ -458,8 +524,8 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
           </div>`
           : `
           <div style="font-family:system-ui,sans-serif;min-width:200px;">
-            <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.05em;color:${stage.color};font-weight:700;">${stage.name} · ${stage.from} → ${stage.to}</div>
-            <div style="font-size:15px;font-weight:700;margin:4px 0;color:#1f1326;">${wp.name}</div>
+            <div style="font-size:11px;text-transform:uppercase;letter-spacing:0.05em;color:${stage.color};font-weight:700;">${t.stageN(stage.id)} · ${localizePlaceName(stage.from, lang)} → ${localizePlaceName(stage.to, lang)}</div>
+            <div style="font-size:15px;font-weight:700;margin:4px 0;color:#1f1326;">${localizePlaceName(wp.name, lang)}</div>
             ${wp.road ? `<div style="font-size:12px;color:#6b7280;">${t.road} ${wp.road}</div>` : ""}
             <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:8px;font-size:12px;">
               <div><strong>${t.totalKmLabel}</strong><br/>${wp.totalKm}</div>
@@ -498,14 +564,14 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
             zIndexOffset: 700,
           }).addTo(layers);
           const streetsHtml = group.streets
-            .map((s) => `<li style="margin:2px 0;">${s}</li>`)
+            .map((s) => `<li style="margin:2px 0;">${localizeClosureText(s, lang)}</li>`)
             .join("");
           m.bindPopup(`
             <div style="font-family:system-ui,sans-serif;max-width:320px;">
-              <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:#b91c1c;font-weight:800;">${t.closuresPin} · ${cl.city}</div>
-              <div style="font-size:13px;font-weight:700;margin:4px 0 6px;color:#1f1326;line-height:1.3;">${group.period}</div>
+              <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:#b91c1c;font-weight:800;">${t.closuresPin} · ${localizePlaceName(cl.city, lang)}</div>
+              <div style="font-size:13px;font-weight:700;margin:4px 0 6px;color:#1f1326;line-height:1.3;">${localizeClosureText(group.period, lang)}</div>
               <ul style="font-size:12px;color:#374151;padding-left:16px;margin:0;line-height:1.35;max-height:220px;overflow-y:auto;">${streetsHtml}</ul>
-              ${cl.note ? `<div style="font-size:11px;color:#6b7280;margin-top:6px;font-style:italic;">${cl.note}</div>` : ""}
+              ${cl.note ? `<div style="font-size:11px;color:#6b7280;margin-top:6px;font-style:italic;">${localizeClosureText(cl.note, lang)}</div>` : ""}
             </div>
           `);
         });
@@ -520,7 +586,7 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
     return () => {
       cancelled = true;
     };
-  }, [stages, activeStageId, showOfficial, t]);
+  }, [stages, activeStageId, showOfficial, t, lang]);
 
   // Render cultural / sport event pins
   useEffect(() => {
@@ -553,13 +619,13 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
       }).addTo(layer);
 
       if (items.length === 1) {
-        marker.bindPopup(eventPopup(primary.ev, primary.cityName, primary.color, t.weekdays, t.months, t.tagLabels));
+        marker.bindPopup(eventPopup(primary.ev, primary.cityName, primary.color, t.weekdays, t.months, t.tagLabels, lang));
       } else {
         const sorted = [...items].sort((a, b) =>
           (a.ev.date + (a.ev.time ?? "")).localeCompare(b.ev.date + (b.ev.time ?? "")),
         );
         const html = `<div style="font-family:system-ui,sans-serif;max-width:300px;max-height:300px;overflow-y:auto;">
-          <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:${primary.color};font-weight:800;margin-bottom:6px;">${primary.cityName} · ${t.eventsAt(items.length)}</div>
+          <div style="font-size:10px;text-transform:uppercase;letter-spacing:0.08em;color:${primary.color};font-weight:800;margin-bottom:6px;">${localizePlaceName(primary.cityName, lang)} · ${t.eventsAt(items.length)}</div>
           ${sorted.map(({ ev, color }) => `
             <div style="border-top:1px solid #e5e7eb;padding:6px 0;">
               <div style="font-size:11px;color:${color};font-weight:700;">${fmtDateWith(ev.date, t.weekdays, t.months)}${ev.time ? ` · ${ev.time}` : ""}${ev.tag ? ` · ${t.tagLabels[ev.tag]}` : ""}</div>
@@ -571,7 +637,7 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
         marker.bindPopup(html);
       }
     }
-  }, [showEvents, t]);
+  }, [showEvents, t, lang]);
 
   const handleLocate = () => {
     if (!navigator.geolocation || !mapRef.current || !userLayerRef.current) return;
