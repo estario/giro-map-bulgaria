@@ -126,7 +126,7 @@ export const T: Record<Lang, Dict> = {
     stagesCities: "3 етапа · 5 града",
     mapHeading: "Маршрут на картата",
     mapSubtitle:
-      "Бургас е нанесен с детайлните uMap слоеве от референцията; останалите етапи се чертаят по OSRM.",
+      "Кликни на пин, за да видиш кога преминава колоната, кога се затварят улиците и кои са най-добрите места за гледане. Превключи между трите етапа от бутоните по-долу.",
     allStages: "Всички етапи",
     stageN: (n) => `Етап ${n}`,
     findMe: "Намери ме",
@@ -218,7 +218,7 @@ export const T: Record<Lang, Dict> = {
     stagesCities: "3 stages · 5 cities",
     mapHeading: "Route on the map",
     mapSubtitle:
-      "Burgas is drawn with the detailed uMap reference layers; the other stages are routed via OSRM.",
+      "Tap a pin to see when the peloton passes, when streets close and the best spots to watch the race. Switch between the three stages with the buttons below.",
     allStages: "All stages",
     stageN: (n) => `Stage ${n}`,
     findMe: "Find me",
@@ -310,7 +310,7 @@ export const T: Record<Lang, Dict> = {
     stagesCities: "3 tappe · 5 città",
     mapHeading: "Percorso sulla mappa",
     mapSubtitle:
-      "Burgas è tracciata con i livelli dettagliati di uMap; le altre tappe sono tracciate tramite OSRM.",
+      "Tocca un segnaposto per vedere quando passa il gruppo, quando chiudono le strade e i punti migliori per assistere alla corsa. Passa da una tappa all'altra con i pulsanti qui sotto.",
     allStages: "Tutte le tappe",
     stageN: (n) => `Tappa ${n}`,
     findMe: "Trovami",
