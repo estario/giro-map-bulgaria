@@ -236,7 +236,7 @@ function StageDetail({ stageId }: { stageId: number }) {
               <tbody>
                 {stage.waypoints.map((w, i) => (
                   <tr key={i} className="border-t border-border hover:bg-accent/30">
-                    <td className="p-2 font-medium">{w.name}</td>
+                    <td className="p-2 font-medium">{localizePlaceName(w.name, lang)}</td>
                     <td className="p-2 text-right text-muted-foreground">{w.totalKm}</td>
                     <td className="p-2 text-right font-semibold" style={{ color: stage.color }}>
                       {w.raceTime}
