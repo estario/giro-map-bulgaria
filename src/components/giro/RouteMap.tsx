@@ -472,7 +472,27 @@ const STAGE1_NEUTRAL_ROUTE: [number, number][] = [
   [42.669740, 27.706800],
 ];
 
-function addStage1NeutralRoute(layers: L.LayerGroup, lang: Lang) {
+// Plovdiv neutralized start section: from the ceremonial start near the
+// Roman Theatre / city centre out through bul. „6-ти септември" and
+// bul. „Христо Ботев" west to km 0 on road I-8.
+const STAGE3_NEUTRAL_ROUTE: [number, number][] = [
+  [42.142100, 24.749900], // ПЛОВДИВ старт (Античен театър / център)
+  [42.143380, 24.748420],
+  [42.144700, 24.746650],
+  [42.146100, 24.744300],
+  [42.147350, 24.741600],
+  [42.148450, 24.738500],
+  [42.149400, 24.735100],
+  [42.150300, 24.731400],
+  [42.151200, 24.727500],
+  [42.152100, 24.723500],
+  [42.153000, 24.719500],
+  [42.153900, 24.715600],
+  [42.154700, 24.712500],
+  [42.155330, 24.709980], // Км0
+];
+
+function addNeutralRoute(layers: L.LayerGroup, route: [number, number][], lang: Lang) {
   const label =
     lang === "bg"
       ? "Неутрализиран стартов участък до km 0"
@@ -480,7 +500,7 @@ function addStage1NeutralRoute(layers: L.LayerGroup, lang: Lang) {
         ? "Tratto neutralizzato fino al km 0"
         : "Neutralized start section to km 0";
 
-  L.polyline(STAGE1_NEUTRAL_ROUTE as L.LatLngExpression[], {
+  L.polyline(route as L.LatLngExpression[], {
     color: "#ffffff",
     weight: 9,
     opacity: 0.92,
@@ -488,7 +508,7 @@ function addStage1NeutralRoute(layers: L.LayerGroup, lang: Lang) {
     lineJoin: "round",
   }).addTo(layers);
 
-  L.polyline(STAGE1_NEUTRAL_ROUTE as L.LatLngExpression[], {
+  L.polyline(route as L.LatLngExpression[], {
     color: "#16a34a",
     weight: 5,
     opacity: 1,
