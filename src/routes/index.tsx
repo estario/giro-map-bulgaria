@@ -168,7 +168,7 @@ function Stat({ icon, label }: { icon: React.ReactNode; label: string }) {
 
 function StageSummaryCard({ stageId, onSelect }: { stageId: number; onSelect: () => void }) {
   const stage = stages.find((s) => s.id === stageId)!;
-  const { t } = useT();
+  const { t, lang } = useT();
   return (
     <button
       onClick={onSelect}
@@ -182,7 +182,7 @@ function StageSummaryCard({ stageId, onSelect }: { stageId: number; onSelect: ()
         {t.stageN(stage.id)} · {stage.date}
       </div>
       <h3 className="mt-2 text-xl font-bold">
-        {stage.from} → {stage.to}
+        {localizePlaceName(stage.from, lang)} → {localizePlaceName(stage.to, lang)}
       </h3>
       <div className="mt-3 flex items-center gap-4 text-sm text-muted-foreground tabular-nums">
         <span className="inline-flex items-center gap-1">
@@ -198,7 +198,7 @@ function StageSummaryCard({ stageId, onSelect }: { stageId: number; onSelect: ()
 
 function StageDetail({ stageId }: { stageId: number }) {
   const stage = stages.find((s) => s.id === stageId)!;
-  const { t } = useT();
+  const { t, lang } = useT();
   return (
     <div className="grid lg:grid-cols-2 gap-6">
       {/* Schedule */}
@@ -207,7 +207,7 @@ function StageDetail({ stageId }: { stageId: number }) {
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="text-2xl">
-                {stage.from} → {stage.to}
+                {localizePlaceName(stage.from, lang)} → {localizePlaceName(stage.to, lang)}
               </CardTitle>
               <p className="text-sm text-muted-foreground mt-1">
                 {stage.date} · {stage.distanceKm} {t.kmShort} · {t.stageN(stage.id)}
