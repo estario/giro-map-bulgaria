@@ -277,9 +277,63 @@ function markerFinishLabel(stageId: number, lang: Lang) {
   return `ФИНАЛ Е${stageId}`;
 }
 
+// Official Bulgarian streamlined transliteration system (Bulgarian Government).
+// Used to convert Cyrillic proper names (street/place names) into Latin script
+// for EN/IT presentations of route notes and closures.
+const BG_TRANSLIT_MAP: Array<[RegExp, string]> = [
+  [/щ/g, "sht"], [/Щ/g, "Sht"],
+  [/ьо/g, "yo"], [/Ьо/g, "Yo"],
+  [/ьо/gi, "yo"],
+  [/ю/g, "yu"], [/Ю/g, "Yu"],
+  [/я/g, "ya"], [/Я/g, "Ya"],
+  [/ж/g, "zh"], [/Ж/g, "Zh"],
+  [/ч/g, "ch"], [/Ч/g, "Ch"],
+  [/ш/g, "sh"], [/Ш/g, "Sh"],
+  [/ъ/g, "a"],  [/Ъ/g, "A"],
+  [/ь/g, "y"],  [/Ь/g, "Y"],
+  [/а/g, "a"], [/А/g, "A"],
+  [/б/g, "b"], [/Б/g, "B"],
+  [/в/g, "v"], [/В/g, "V"],
+  [/г/g, "g"], [/Г/g, "G"],
+  [/д/g, "d"], [/Д/g, "D"],
+  [/е/g, "e"], [/Е/g, "E"],
+  [/з/g, "z"], [/З/g, "Z"],
+  [/и/g, "i"], [/И/g, "I"],
+  [/й/g, "y"], [/Й/g, "Y"],
+  [/к/g, "k"], [/К/g, "K"],
+  [/л/g, "l"], [/Л/g, "L"],
+  [/м/g, "m"], [/М/g, "M"],
+  [/н/g, "n"], [/Н/g, "N"],
+  [/о/g, "o"], [/О/g, "O"],
+  [/п/g, "p"], [/П/g, "P"],
+  [/р/g, "r"], [/Р/g, "R"],
+  [/с/g, "s"], [/С/g, "S"],
+  [/т/g, "t"], [/Т/g, "T"],
+  [/у/g, "u"], [/У/g, "U"],
+  [/ф/g, "f"], [/Ф/g, "F"],
+  [/х/g, "h"], [/Х/g, "H"],
+  [/ц/g, "ts"], [/Ц/g, "Ts"],
+];
+
+function transliterateBg(input: string): string {
+  let out = input;
+  for (const [re, rep] of BG_TRANSLIT_MAP) out = out.replace(re, rep);
+  // -ия endings stay as -ia (official rule)
+  out = out.replace(/iya\b/g, "ia").replace(/Iya\b/g, "Ia");
+  return out;
+}
+
+function transliterateQuoted(quoted: string): string {
+  // Keep the surrounding quotes, transliterate only the contents.
+  return quoted.replace(/„([^"]*)"/g, (_, inner) => `„${transliterateBg(inner)}"`);
+}
+
 export function localizePlaceName(name: string, lang: Lang) {
   if (lang === "bg") return name;
   let text = name;
+  // Transliterate Cyrillic inside quoted proper names („…") so street/place
+  // names like „Демокрация" become „Demokratsia" in EN/IT output.
+  text = text.replace(/„[^"]*?"/g, (m) => transliterateQuoted(m));
   for (const [bgName, labels] of Object.entries(ALL_PLACE_LABELS).sort((a, b) => b[0].length - a[0].length)) {
     text = text.replaceAll(bgName, labels[lang]);
     text = text.replaceAll(bgName.toUpperCase(), labels[lang].toUpperCase());
@@ -318,7 +372,7 @@ export function localizeClosureText(text: string, lang: Lang) {
   // replacements so we don't translate parts of names like „Демокрация".
   const quoted: string[] = [];
   let working = text.replace(/„[^"]*?"/g, (m) => {
-    quoted.push(m);
+    quoted.push(transliterateQuoted(m));
     return `\u0001${quoted.length - 1}\u0001`;
   });
   let result = localizePlaceName(working, lang);
