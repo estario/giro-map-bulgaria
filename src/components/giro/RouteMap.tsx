@@ -277,7 +277,7 @@ function markerFinishLabel(stageId: number, lang: Lang) {
   return `ФИНАЛ Е${stageId}`;
 }
 
-function localizePlaceName(name: string, lang: Lang) {
+export function localizePlaceName(name: string, lang: Lang) {
   if (lang === "bg") return name;
   let text = name;
   for (const [bgName, labels] of Object.entries(ALL_PLACE_LABELS).sort((a, b) => b[0].length - a[0].length)) {
