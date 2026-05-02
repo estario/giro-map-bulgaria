@@ -258,6 +258,8 @@ export const T: Record<Lang, Dict> = {
     viewingSpotKicker: "Recommended viewing spot",
     hideViewingSpots: "Hide viewing spots",
     showViewingSpots: "Show viewing spots",
+    hideClosures: "Hide road closures",
+    showClosures: "Show road closures",
     legendViewingSpot: "Viewing spot",
     stageTypeLabels: {
       km: "KM marker",
@@ -352,6 +354,8 @@ export const T: Record<Lang, Dict> = {
     viewingSpotKicker: "Punto consigliato per assistere",
     hideViewingSpots: "Nascondi punti panoramici",
     showViewingSpots: "Mostra punti panoramici",
+    hideClosures: "Nascondi chiusure strade",
+    showClosures: "Mostra chiusure strade",
     legendViewingSpot: "Punto panoramico",
     stageTypeLabels: {
       km: "Marcatore KM",
