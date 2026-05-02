@@ -717,6 +717,7 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
   const [showEvents, setShowEvents] = useState(true);
   const [showOfficial, setShowOfficial] = useState(true);
   const [showViewing, setShowViewing] = useState(true);
+  const [showClosures, setShowClosures] = useState(true);
   const [interactive, setInteractive] = useState(false);
   const { t, lang } = useT();
 
