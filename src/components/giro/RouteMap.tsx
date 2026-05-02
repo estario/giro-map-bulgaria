@@ -312,7 +312,7 @@ export function localizePlaceName(name: string, lang: Lang) {
   return text;
 }
 
-function localizeClosureText(text: string, lang: Lang) {
+export function localizeClosureText(text: string, lang: Lang) {
   if (lang === "bg") return text;
   let result = localizePlaceName(text, lang);
   // Multi-word phrases first (longest -> shortest), then individual words with
