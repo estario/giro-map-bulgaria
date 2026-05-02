@@ -59,6 +59,8 @@ type Dict = {
   viewingSpotKicker: string;
   hideViewingSpots: string;
   showViewingSpots: string;
+  hideClosures: string;
+  showClosures: string;
   legendViewingSpot: string;
   stageTypeLabels: {
     km: string;
@@ -160,6 +162,8 @@ export const T: Record<Lang, Dict> = {
     viewingSpotKicker: "Препоръчано място за гледане",
     hideViewingSpots: "Скрий места за гледане",
     showViewingSpots: "Покажи места за гледане",
+    hideClosures: "Скрий затворени пътища",
+    showClosures: "Покажи затворени пътища",
     legendViewingSpot: "Място за гледане",
     stageTypeLabels: {
       km: "КМ маркер",
@@ -254,6 +258,8 @@ export const T: Record<Lang, Dict> = {
     viewingSpotKicker: "Recommended viewing spot",
     hideViewingSpots: "Hide viewing spots",
     showViewingSpots: "Show viewing spots",
+    hideClosures: "Hide road closures",
+    showClosures: "Show road closures",
     legendViewingSpot: "Viewing spot",
     stageTypeLabels: {
       km: "KM marker",
@@ -348,6 +354,8 @@ export const T: Record<Lang, Dict> = {
     viewingSpotKicker: "Punto consigliato per assistere",
     hideViewingSpots: "Nascondi punti panoramici",
     showViewingSpots: "Mostra punti panoramici",
+    hideClosures: "Nascondi chiusure strade",
+    showClosures: "Mostra chiusure strade",
     legendViewingSpot: "Punto panoramico",
     stageTypeLabels: {
       km: "Marcatore KM",

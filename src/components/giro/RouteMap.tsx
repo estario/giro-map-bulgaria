@@ -6,7 +6,7 @@ import { cityPrograms, tagColor, localizeEvent, localizeCityName, type CulturalE
 import { GIRO_STAGES, type GiroPoint } from "@/data/giroStages";
 import { viewingSpots, localizeViewingSpot } from "@/data/viewingSpots";
 import { Button } from "@/components/ui/button";
-import { LocateFixed, Loader2, Sparkles, Eye, MousePointerClick } from "lucide-react";
+import { LocateFixed, Loader2, Sparkles, Eye, MousePointerClick, TriangleAlert } from "lucide-react";
 import { useT } from "@/i18n/LanguageProvider";
 import type { Lang } from "@/i18n/translations";
 
@@ -717,6 +717,7 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
   const [showEvents, setShowEvents] = useState(true);
   const [showOfficial, setShowOfficial] = useState(true);
   const [showViewing, setShowViewing] = useState(true);
+  const [showClosures, setShowClosures] = useState(true);
   const [interactive, setInteractive] = useState(false);
   const { t, lang } = useT();
 
@@ -947,6 +948,7 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
       // Place one 🚧 pin per closure GROUP at the corresponding city center,
       // with small fan-out offsets so multiple groups in the same city are
       // distinguishable on the map.
+      if (!showClosures) return;
       const cityCenters: Record<string, [number, number]> = {
         // Old Town Nessebar peninsula — keeps closure pins on land near the actual closed streets
         "несебър": [42.6595, 27.7345],
@@ -998,7 +1000,7 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
     return () => {
       cancelled = true;
     };
-  }, [stages, activeStageId, showOfficial, t, lang]);
+  }, [stages, activeStageId, showOfficial, showClosures, t, lang]);
 
   // Render cultural / sport event pins
   useEffect(() => {
@@ -1173,6 +1175,15 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
         >
           <Eye className="h-4 w-4" />
           <span className="ml-2">{showViewing ? t.hideViewingSpots : t.showViewingSpots}</span>
+        </Button>
+        <Button
+          onClick={() => setShowClosures((v) => !v)}
+          size="sm"
+          variant={showClosures ? "default" : "secondary"}
+          className="shadow-lg"
+        >
+          <TriangleAlert className="h-4 w-4" />
+          <span className="ml-2">{showClosures ? t.hideClosures : t.showClosures}</span>
         </Button>
         <Button
           onClick={() => setShowOfficial((v) => !v)}
