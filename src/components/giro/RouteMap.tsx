@@ -948,6 +948,7 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
       // Place one 🚧 pin per closure GROUP at the corresponding city center,
       // with small fan-out offsets so multiple groups in the same city are
       // distinguishable on the map.
+      if (!showClosures) return;
       const cityCenters: Record<string, [number, number]> = {
         // Old Town Nessebar peninsula — keeps closure pins on land near the actual closed streets
         "несебър": [42.6595, 27.7345],
