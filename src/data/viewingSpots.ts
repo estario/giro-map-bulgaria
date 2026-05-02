@@ -236,7 +236,7 @@ export const viewingSpots: ViewingSpot[] = [
   {
     id: "s2-vratnik",
     stageId: 2,
-    coords: [42.8230, 26.4485],
+    coords: [42.8209, 26.1646],
     title: "Проход „Вратник“ / „Железни врата“",
     description: "Категоризираното изкачване по пътя към Велико Търново.",
     i18n: {
@@ -253,7 +253,7 @@ export const viewingSpots: ViewingSpot[] = [
   {
     id: "s2-byala",
     stageId: 2,
-    coords: [42.7882, 26.4363],
+    coords: [42.7297, 26.1885],
     title: "Бяла",
     description: "Колоната минава през Бяла по главния път.",
     i18n: {
