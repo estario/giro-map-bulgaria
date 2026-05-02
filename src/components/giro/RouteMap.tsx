@@ -492,6 +492,28 @@ const STAGE3_NEUTRAL_ROUTE: [number, number][] = [
   [42.155330, 24.709980], // Км0
 ];
 
+// Burgas neutralized start section: from pl. „Тройката" through the city
+// centre and kv. Ветрен north-west to km 0 on road I-6 toward Aytos.
+const STAGE2_NEUTRAL_ROUTE: [number, number][] = [
+  [42.496587, 27.471181], // БУРГАС старт (пл. Тройката)
+  [42.498900, 27.469200],
+  [42.501800, 27.467300],
+  [42.504900, 27.465100],
+  [42.508400, 27.462600],
+  [42.512000, 27.460100],
+  [42.515800, 27.457500],
+  [42.519600, 27.455000],
+  [42.523500, 27.452400],
+  [42.527600, 27.449700],
+  [42.531800, 27.446900],
+  [42.535900, 27.443900],
+  [42.539900, 27.440800],
+  [42.543700, 27.437500],
+  [42.547300, 27.434500],
+  [42.550800, 27.431500],
+  [42.554560, 27.428530], // Км0
+];
+
 function addNeutralRoute(layers: L.LayerGroup, route: [number, number][], lang: Lang) {
   const label =
     lang === "bg"
