@@ -884,7 +884,10 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
               : makeIcon(stage.color, `${stage.id}`);
         const marker = L.marker(wp.coords as L.LatLngExpression, {
           icon,
-          zIndexOffset: isSharedFinish ? 1100 : isStart ? 1000 : isFinish ? 900 : 0,
+          // KM waypoint markers were getting buried under viewing-spot (800),
+          // closure (700) and event (500) pins. Lift intermediate waypoints
+          // above events/closures/viewing spots so every KM pin is clickable.
+          zIndexOffset: isSharedFinish ? 1100 : isStart ? 1000 : isFinish ? 900 : 850,
         }).addTo(layers);
 
         const popupHtml = isSharedFinish
