@@ -31,6 +31,8 @@ type Dict = {
   // Map controls / labels
   findMe: string;
   hideEvents: string;
+  activateMap: string;
+  lockMap: string;
   showEvents: string;
   hideKm: string;
   showKm: string;
@@ -130,6 +132,8 @@ export const T: Record<Lang, Dict> = {
     allStages: "Всички етапи",
     stageN: (n) => `Етап ${n}`,
     findMe: "Намери ме",
+    activateMap: "Натисни, за да разгледаш картата",
+    lockMap: "Заключи картата",
     hideEvents: "Скрий събития",
     showEvents: "Покажи събития",
     hideKm: "Скрий KM маркери",
@@ -222,6 +226,8 @@ export const T: Record<Lang, Dict> = {
     allStages: "All stages",
     stageN: (n) => `Stage ${n}`,
     findMe: "Find me",
+    activateMap: "Tap to explore the map",
+    lockMap: "Lock map",
     hideEvents: "Hide events",
     showEvents: "Show events",
     hideKm: "Hide KM markers",
@@ -314,6 +320,8 @@ export const T: Record<Lang, Dict> = {
     allStages: "Tutte le tappe",
     stageN: (n) => `Tappa ${n}`,
     findMe: "Trovami",
+    activateMap: "Tocca per esplorare la mappa",
+    lockMap: "Blocca mappa",
     hideEvents: "Nascondi eventi",
     showEvents: "Mostra eventi",
     hideKm: "Nascondi marcatori KM",
