@@ -6,7 +6,7 @@ import { cityPrograms, tagColor, localizeEvent, localizeCityName, type CulturalE
 import { GIRO_STAGES, type GiroPoint } from "@/data/giroStages";
 import { viewingSpots, localizeViewingSpot } from "@/data/viewingSpots";
 import { Button } from "@/components/ui/button";
-import { LocateFixed, Loader2, Sparkles, Eye, MousePointerClick } from "lucide-react";
+import { LocateFixed, Loader2, Sparkles, Eye, MousePointerClick, TriangleAlert } from "lucide-react";
 import { useT } from "@/i18n/LanguageProvider";
 import type { Lang } from "@/i18n/translations";
 
