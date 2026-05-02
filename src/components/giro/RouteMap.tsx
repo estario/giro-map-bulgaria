@@ -884,7 +884,10 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
               : makeIcon(stage.color, `${stage.id}`);
         const marker = L.marker(wp.coords as L.LatLngExpression, {
           icon,
-          zIndexOffset: isSharedFinish ? 1100 : isStart ? 1000 : isFinish ? 900 : 0,
+          // KM waypoint markers were getting buried under viewing-spot (800),
+          // closure (700) and event (500) pins. Lift intermediate waypoints
+          // above events/closures/viewing spots so every KM pin is clickable.
+          zIndexOffset: isSharedFinish ? 1100 : isStart ? 1000 : isFinish ? 900 : 850,
         }).addTo(layers);
 
         const popupHtml = isSharedFinish
@@ -933,10 +936,12 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
         const center = cityCenters[key];
         if (!center) return;
         cl.groups.forEach((group, gi) => {
-          // Tighter fan-out (~80–180 m) so multiple pins per city stay close to
-          // the actual closure area instead of drifting into the sea / industrial zones.
-          const angle = ((ci * 3 + gi) * 55) * (Math.PI / 180);
-          const r = 0.0010 + ((ci + gi) % 3) * 0.0006;
+          // Wider fan-out (~400–900 m) so multiple closure groups in one city
+          // stop stacking on top of each other (and on top of the start/finish
+          // markers). Spiral pattern keeps each pin distinguishable.
+          const totalIdx = ci * 7 + gi;
+          const angle = (totalIdx * 47) * (Math.PI / 180);
+          const r = 0.0040 + totalIdx * 0.0010;
           const lat = center[0] + Math.cos(angle) * r;
           const lng = center[1] + Math.sin(angle) * r * 1.35;
           const m = L.marker([lat, lng], {
