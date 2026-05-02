@@ -7,6 +7,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import { MapPin, Clock, Route as RouteIcon, AlertTriangle, Calendar } from "lucide-react";
 import { LanguageSwitcher, useT } from "@/i18n/LanguageProvider";
+import giroLogo from "@/assets/giro-logo.png";
 
 const RouteMap = lazy(() => import("@/components/giro/RouteMap"));
 import { localizePlaceName, localizeClosureText } from "@/components/giro/RouteMap";
@@ -56,14 +57,23 @@ function Index() {
           <div className="absolute top-4 right-6 z-10">
             <LanguageSwitcher />
           </div>
-          <div className="flex flex-wrap items-center gap-2 text-xs uppercase tracking-[0.2em] opacity-90">
-            <span>{t.grandePartenza}</span>
-            <span>·</span>
-            <span>{t.bulgaria2026}</span>
+          <div className="flex flex-col md:flex-row md:items-center gap-6 md:gap-8">
+            <img
+              src={giroLogo}
+              alt="Giro d'Italia 2026"
+              className="h-28 md:h-40 w-auto drop-shadow-[0_8px_24px_rgba(0,0,0,0.35)] bg-white/95 rounded-2xl p-3 ring-1 ring-white/40 shrink-0"
+            />
+            <div>
+              <div className="flex flex-wrap items-center gap-2 text-xs uppercase tracking-[0.2em] opacity-90">
+                <span>{t.grandePartenza}</span>
+                <span>·</span>
+                <span>{t.bulgaria2026}</span>
+              </div>
+              <h1 className="mt-3 text-balance text-5xl md:text-7xl font-black leading-[0.95]">
+                {t.heroTitle}
+              </h1>
+            </div>
           </div>
-          <h1 className="mt-4 text-balance text-5xl md:text-7xl font-black leading-[0.95]">
-            {t.heroTitle}
-          </h1>
           <p className="mt-4 max-w-2xl text-pretty text-lg md:text-xl opacity-95">
             {t.heroSubtitle}
           </p>
