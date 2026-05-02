@@ -6,7 +6,7 @@ import { cityPrograms, tagColor, localizeEvent, localizeCityName, type CulturalE
 import { GIRO_STAGES, type GiroPoint } from "@/data/giroStages";
 import { viewingSpots, localizeViewingSpot } from "@/data/viewingSpots";
 import { Button } from "@/components/ui/button";
-import { LocateFixed, Loader2, Sparkles, Eye } from "lucide-react";
+import { LocateFixed, Loader2, Sparkles, Eye, MousePointerClick } from "lucide-react";
 import { useT } from "@/i18n/LanguageProvider";
 import type { Lang } from "@/i18n/translations";
 
@@ -592,6 +592,7 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
   const [showEvents, setShowEvents] = useState(true);
   const [showOfficial, setShowOfficial] = useState(true);
   const [showViewing, setShowViewing] = useState(true);
+  const [interactive, setInteractive] = useState(false);
   const { t, lang } = useT();
 
   useEffect(() => {
@@ -599,7 +600,8 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
     const map = L.map(containerRef.current, {
       center: [42.7339, 25.4858],
       zoom: 7,
-      scrollWheelZoom: true,
+      scrollWheelZoom: false,
+      dragging: true,
     });
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       attribution:
@@ -617,6 +619,18 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
       mapRef.current = null;
     };
   }, []);
+
+  // Toggle scroll-wheel zoom + dragging based on user-activated "interactive" mode.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    if (interactive) {
+      map.scrollWheelZoom.enable();
+      map.dragging.enable();
+    } else {
+      map.scrollWheelZoom.disable();
+    }
+  }, [interactive]);
 
   useEffect(() => {
     const map = mapRef.current;
