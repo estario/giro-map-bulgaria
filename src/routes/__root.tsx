@@ -34,10 +34,14 @@ export const Route = createRootRoute({
       { name: "description", content: "Интерактивна карта на маршрута на Giro d'Italia 2026 в България: етапи Несебър–Бургас, Бургас–Велико Търново, Пловдив–София, часове и затворени улици." },
       { name: "author", content: "Giro d'Italia BG" },
       { property: "og:title", content: "Giro d'Italia 2026 — Grande Partenza България" },
-      { property: "og:description", content: "Маршрут, часове и затворени улици за Giro d'Italia 2026 в България." },
+      { property: "og:description", content: "Интерактивна карта на маршрута на Giro d'Italia 2026 в България: етапи Несебър–Бургас, Бургас–Велико Търново, Пловдив–София, часове и затворени улици." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "Giro d'Italia 2026 — Grande Partenza България" },
+      { name: "twitter:description", content: "Интерактивна карта на маршрута на Giro d'Italia 2026 в България: етапи Несебър–Бургас, Бургас–Велико Търново, Пловдив–София, часове и затворени улици." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/d2b5ba16-71fe-481c-b1ab-c0ed1454a078/id-preview-b0e1fdb1--79963133-cd82-49b8-bf74-8fd8408039cd.lovable.app-1777706310267.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/d2b5ba16-71fe-481c-b1ab-c0ed1454a078/id-preview-b0e1fdb1--79963133-cd82-49b8-bf74-8fd8408039cd.lovable.app-1777706310267.png" },
     ],
     links: [
       {
