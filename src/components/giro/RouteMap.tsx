@@ -277,7 +277,7 @@ function markerFinishLabel(stageId: number, lang: Lang) {
   return `ФИНАЛ Е${stageId}`;
 }
 
-function localizePlaceName(name: string, lang: Lang) {
+export function localizePlaceName(name: string, lang: Lang) {
   if (lang === "bg") return name;
   let text = name;
   for (const [bgName, labels] of Object.entries(ALL_PLACE_LABELS).sort((a, b) => b[0].length - a[0].length)) {
@@ -312,7 +312,7 @@ function localizePlaceName(name: string, lang: Lang) {
   return text;
 }
 
-function localizeClosureText(text: string, lang: Lang) {
+export function localizeClosureText(text: string, lang: Lang) {
   if (lang === "bg") return text;
   let result = localizePlaceName(text, lang);
   // Multi-word phrases first (longest -> shortest), then individual words with

@@ -9,6 +9,7 @@ import { MapPin, Clock, Route as RouteIcon, AlertTriangle, Calendar } from "luci
 import { LanguageSwitcher, useT } from "@/i18n/LanguageProvider";
 
 const RouteMap = lazy(() => import("@/components/giro/RouteMap"));
+import { localizePlaceName, localizeClosureText } from "@/components/giro/RouteMap";
 const NearMePanel = lazy(() => import("@/components/giro/NearMePanel"));
 const CulturalProgram = lazy(() => import("@/components/giro/CulturalProgram"));
 
@@ -167,7 +168,7 @@ function Stat({ icon, label }: { icon: React.ReactNode; label: string }) {
 
 function StageSummaryCard({ stageId, onSelect }: { stageId: number; onSelect: () => void }) {
   const stage = stages.find((s) => s.id === stageId)!;
-  const { t } = useT();
+  const { t, lang } = useT();
   return (
     <button
       onClick={onSelect}
@@ -181,7 +182,7 @@ function StageSummaryCard({ stageId, onSelect }: { stageId: number; onSelect: ()
         {t.stageN(stage.id)} · {stage.date}
       </div>
       <h3 className="mt-2 text-xl font-bold">
-        {stage.from} → {stage.to}
+        {localizePlaceName(stage.from, lang)} → {localizePlaceName(stage.to, lang)}
       </h3>
       <div className="mt-3 flex items-center gap-4 text-sm text-muted-foreground tabular-nums">
         <span className="inline-flex items-center gap-1">
@@ -197,7 +198,7 @@ function StageSummaryCard({ stageId, onSelect }: { stageId: number; onSelect: ()
 
 function StageDetail({ stageId }: { stageId: number }) {
   const stage = stages.find((s) => s.id === stageId)!;
-  const { t } = useT();
+  const { t, lang } = useT();
   return (
     <div className="grid lg:grid-cols-2 gap-6">
       {/* Schedule */}
@@ -206,7 +207,7 @@ function StageDetail({ stageId }: { stageId: number }) {
           <div className="flex items-center justify-between">
             <div>
               <CardTitle className="text-2xl">
-                {stage.from} → {stage.to}
+                {localizePlaceName(stage.from, lang)} → {localizePlaceName(stage.to, lang)}
               </CardTitle>
               <p className="text-sm text-muted-foreground mt-1">
                 {stage.date} · {stage.distanceKm} {t.kmShort} · {t.stageN(stage.id)}
@@ -235,7 +236,7 @@ function StageDetail({ stageId }: { stageId: number }) {
               <tbody>
                 {stage.waypoints.map((w, i) => (
                   <tr key={i} className="border-t border-border hover:bg-accent/30">
-                    <td className="p-2 font-medium">{w.name}</td>
+                    <td className="p-2 font-medium">{localizePlaceName(w.name, lang)}</td>
                     <td className="p-2 text-right text-muted-foreground">{w.totalKm}</td>
                     <td className="p-2 text-right font-semibold" style={{ color: stage.color }}>
                       {w.raceTime}
@@ -263,19 +264,19 @@ function StageDetail({ stageId }: { stageId: number }) {
         <CardContent>
           {stage.closures.map((c) => (
             <div key={c.city} className="mb-4 last:mb-0">
-              <h4 className="font-bold text-lg mb-2">{c.city}</h4>
+              <h4 className="font-bold text-lg mb-2">{localizePlaceName(c.city, lang)}</h4>
               <Accordion type="multiple" className="w-full">
                 {c.groups.map((g, gi) => (
                   <AccordionItem key={gi} value={`${c.city}-${gi}`}>
                     <AccordionTrigger className="text-left">
-                      <span className="text-sm font-semibold">{g.period}</span>
+                      <span className="text-sm font-semibold">{localizeClosureText(g.period, lang)}</span>
                     </AccordionTrigger>
                     <AccordionContent>
                       <ul className="space-y-1.5 text-sm">
                         {g.streets.map((s, si) => (
                           <li key={si} className="flex gap-2">
                             <span className="text-primary mt-1">▸</span>
-                            <span>{s}</span>
+                            <span>{localizeClosureText(s, lang)}</span>
                           </li>
                         ))}
                       </ul>
@@ -284,7 +285,7 @@ function StageDetail({ stageId }: { stageId: number }) {
                 ))}
               </Accordion>
               {c.note && (
-                <p className="text-xs text-muted-foreground mt-2 italic">{c.note}</p>
+                <p className="text-xs text-muted-foreground mt-2 italic">{localizeClosureText(c.note, lang)}</p>
               )}
             </div>
           ))}
