@@ -1177,6 +1177,15 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
           <span className="ml-2">{showViewing ? t.hideViewingSpots : t.showViewingSpots}</span>
         </Button>
         <Button
+          onClick={() => setShowClosures((v) => !v)}
+          size="sm"
+          variant={showClosures ? "default" : "secondary"}
+          className="shadow-lg"
+        >
+          <TriangleAlert className="h-4 w-4" />
+          <span className="ml-2">{showClosures ? t.hideClosures : t.showClosures}</span>
+        </Button>
+        <Button
           onClick={() => setShowOfficial((v) => !v)}
           size="sm"
           variant={showOfficial ? "default" : "secondary"}
