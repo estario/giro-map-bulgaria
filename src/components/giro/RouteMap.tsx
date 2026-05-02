@@ -1000,7 +1000,7 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
     return () => {
       cancelled = true;
     };
-  }, [stages, activeStageId, showOfficial, t, lang]);
+  }, [stages, activeStageId, showOfficial, showClosures, t, lang]);
 
   // Render cultural / sport event pins
   useEffect(() => {
