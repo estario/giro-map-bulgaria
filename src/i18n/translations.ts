@@ -162,6 +162,8 @@ export const T: Record<Lang, Dict> = {
     viewingSpotKicker: "Препоръчано място за гледане",
     hideViewingSpots: "Скрий места за гледане",
     showViewingSpots: "Покажи места за гледане",
+    hideClosures: "Скрий затворени пътища",
+    showClosures: "Покажи затворени пътища",
     legendViewingSpot: "Място за гледане",
     stageTypeLabels: {
       km: "КМ маркер",
