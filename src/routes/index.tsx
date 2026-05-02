@@ -57,19 +57,19 @@ function Index() {
           <div className="absolute top-4 right-6 z-10">
             <LanguageSwitcher />
           </div>
-          <div className="flex flex-col md:flex-row md:items-center gap-6 md:gap-8">
+          <div className="flex flex-col md:flex-row md:items-center gap-5 md:gap-8">
             <img
               src={giroLogo}
               alt="Giro d'Italia 2026"
-              className="h-28 md:h-40 w-auto drop-shadow-[0_8px_24px_rgba(0,0,0,0.35)] bg-white/95 rounded-2xl p-3 ring-1 ring-white/40 shrink-0"
+              className="h-20 md:h-40 w-auto object-contain self-start md:self-auto drop-shadow-[0_8px_24px_rgba(0,0,0,0.35)] bg-white/95 rounded-2xl p-2 md:p-3 ring-1 ring-white/40 shrink-0"
             />
-            <div>
+            <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-2 text-xs uppercase tracking-[0.2em] opacity-90">
                 <span>{t.grandePartenza}</span>
                 <span>·</span>
                 <span>{t.bulgaria2026}</span>
               </div>
-              <h1 className="mt-3 text-balance text-5xl md:text-7xl font-black leading-[0.95]">
+              <h1 className="mt-3 text-balance text-4xl md:text-7xl font-black leading-[0.95]">
                 {t.heroTitle}
               </h1>
             </div>
