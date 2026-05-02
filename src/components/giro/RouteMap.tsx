@@ -283,6 +283,9 @@ export function localizePlaceName(name: string, lang: Lang) {
   // Transliterate Cyrillic inside quoted proper names („…") so street/place
   // names like „Демокрация" become „Demokratsia" in EN/IT output.
   text = text.replace(/„[^"]*?"/g, (m) => transliterateQuoted(m));
+  // Transliterate Cyrillic inside quoted proper names („…") so street/place
+  // names like „Демокрация" become „Demokratsia" in EN/IT output.
+  text = text.replace(/„[^"]*?"/g, (m) => transliterateQuoted(m));
   for (const [bgName, labels] of Object.entries(ALL_PLACE_LABELS).sort((a, b) => b[0].length - a[0].length)) {
     text = text.replaceAll(bgName, labels[lang]);
     text = text.replaceAll(bgName.toUpperCase(), labels[lang].toUpperCase());
