@@ -6,7 +6,7 @@ import { cityPrograms, tagColor, localizeEvent, localizeCityName, type CulturalE
 import { GIRO_STAGES, type GiroPoint } from "@/data/giroStages";
 import { viewingSpots, localizeViewingSpot } from "@/data/viewingSpots";
 import { Button } from "@/components/ui/button";
-import { LocateFixed, Loader2, Sparkles, Eye } from "lucide-react";
+import { LocateFixed, Loader2, Sparkles, Eye, MousePointerClick } from "lucide-react";
 import { useT } from "@/i18n/LanguageProvider";
 import type { Lang } from "@/i18n/translations";
 
@@ -592,6 +592,7 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
   const [showEvents, setShowEvents] = useState(true);
   const [showOfficial, setShowOfficial] = useState(true);
   const [showViewing, setShowViewing] = useState(true);
+  const [interactive, setInteractive] = useState(false);
   const { t, lang } = useT();
 
   useEffect(() => {
@@ -599,7 +600,8 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
     const map = L.map(containerRef.current, {
       center: [42.7339, 25.4858],
       zoom: 7,
-      scrollWheelZoom: true,
+      scrollWheelZoom: false,
+      dragging: true,
     });
     L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
       attribution:
@@ -617,6 +619,18 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
       mapRef.current = null;
     };
   }, []);
+
+  // Toggle scroll-wheel zoom + dragging based on user-activated "interactive" mode.
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+    if (interactive) {
+      map.scrollWheelZoom.enable();
+      map.dragging.enable();
+    } else {
+      map.scrollWheelZoom.disable();
+    }
+  }, [interactive]);
 
   useEffect(() => {
     const map = mapRef.current;
@@ -944,6 +958,28 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
         className="h-[600px] w-full rounded-2xl overflow-hidden shadow-[var(--shadow-rosa)] border border-border"
         style={{ background: "#f1f5f9" }}
       />
+      {!interactive && (
+        <button
+          type="button"
+          onClick={() => setInteractive(true)}
+          className="absolute inset-0 z-[450] flex items-center justify-center rounded-2xl bg-foreground/30 backdrop-blur-[2px] transition hover:bg-foreground/40 cursor-pointer group"
+          aria-label={t.activateMap}
+        >
+          <span className="inline-flex items-center gap-2 rounded-full bg-background/95 px-5 py-3 text-sm font-semibold shadow-lg border border-border group-hover:scale-105 transition-transform">
+            <MousePointerClick className="h-4 w-4 text-primary" />
+            {t.activateMap}
+          </span>
+        </button>
+      )}
+      {interactive && (
+        <button
+          type="button"
+          onClick={() => setInteractive(false)}
+          className="absolute bottom-4 right-4 z-[400] inline-flex items-center gap-1.5 rounded-full bg-background/95 backdrop-blur px-3 py-1.5 text-[11px] font-semibold shadow-lg border border-border hover:bg-background"
+        >
+          {t.lockMap}
+        </button>
+      )}
       {routingCount > 0 && (
         <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[400] inline-flex items-center gap-2 rounded-full bg-background/95 backdrop-blur px-4 py-2 text-xs font-semibold shadow-lg border border-border">
           <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
