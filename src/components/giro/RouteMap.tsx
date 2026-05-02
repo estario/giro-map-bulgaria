@@ -747,6 +747,10 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
           addNeutralRoute(layers, STAGE1_NEUTRAL_ROUTE, lang);
           allLatLngs.push(...STAGE1_NEUTRAL_ROUTE);
         }
+        if (stage.id === 2) {
+          addNeutralRoute(layers, STAGE2_NEUTRAL_ROUTE, lang);
+          allLatLngs.push(...STAGE2_NEUTRAL_ROUTE);
+        }
         if (stage.id === 3) {
           addNeutralRoute(layers, STAGE3_NEUTRAL_ROUTE, lang);
           allLatLngs.push(...STAGE3_NEUTRAL_ROUTE);
