@@ -59,6 +59,8 @@ type Dict = {
   viewingSpotKicker: string;
   hideViewingSpots: string;
   showViewingSpots: string;
+  hideClosures: string;
+  showClosures: string;
   legendViewingSpot: string;
   stageTypeLabels: {
     km: string;
