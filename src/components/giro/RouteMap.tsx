@@ -936,12 +936,12 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
         const center = cityCenters[key];
         if (!center) return;
         cl.groups.forEach((group, gi) => {
-          // Wider fan-out (~250–550 m) so multiple closure groups in one city
+          // Wider fan-out (~400–900 m) so multiple closure groups in one city
           // stop stacking on top of each other (and on top of the start/finish
           // markers). Spiral pattern keeps each pin distinguishable.
           const totalIdx = ci * 7 + gi;
-          const angle = (totalIdx * 67) * (Math.PI / 180);
-          const r = 0.0028 + (totalIdx % 4) * 0.0014;
+          const angle = (totalIdx * 47) * (Math.PI / 180);
+          const r = 0.0040 + totalIdx * 0.0010;
           const lat = center[0] + Math.cos(angle) * r;
           const lng = center[1] + Math.sin(angle) * r * 1.35;
           const m = L.marker([lat, lng], {
