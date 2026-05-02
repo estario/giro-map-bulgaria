@@ -9,6 +9,7 @@ import { MapPin, Clock, Route as RouteIcon, AlertTriangle, Calendar } from "luci
 import { LanguageSwitcher, useT } from "@/i18n/LanguageProvider";
 
 const RouteMap = lazy(() => import("@/components/giro/RouteMap"));
+import { localizePlaceName } from "@/components/giro/RouteMap";
 const NearMePanel = lazy(() => import("@/components/giro/NearMePanel"));
 const CulturalProgram = lazy(() => import("@/components/giro/CulturalProgram"));
 
