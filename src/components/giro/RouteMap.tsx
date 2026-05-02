@@ -318,7 +318,7 @@ export function localizeClosureText(text: string, lang: Lang) {
   // replacements so we don't translate parts of names like „Демокрация".
   const quoted: string[] = [];
   let working = text.replace(/„[^"]*?"/g, (m) => {
-    quoted.push(m);
+    quoted.push(transliterateQuoted(m));
     return `\u0001${quoted.length - 1}\u0001`;
   });
   let result = localizePlaceName(working, lang);
