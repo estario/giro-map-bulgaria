@@ -314,7 +314,14 @@ export function localizePlaceName(name: string, lang: Lang) {
 
 export function localizeClosureText(text: string, lang: Lang) {
   if (lang === "bg") return text;
-  let result = localizePlaceName(text, lang);
+  // Protect quoted proper names (street/place names in „...") from word-level
+  // replacements so we don't translate parts of names like „Демокрация".
+  const quoted: string[] = [];
+  let working = text.replace(/„[^"]*?"/g, (m) => {
+    quoted.push(m);
+    return `\u0001${quoted.length - 1}\u0001`;
+  });
+  let result = localizePlaceName(working, lang);
   // Multi-word phrases first (longest -> shortest), then individual words with
   // Unicode word boundaries. Critically, we DO NOT translate short particles
   // like "на", "от", "при", "в" — they appear inside many Bulgarian words
@@ -340,8 +347,15 @@ export function localizeClosureText(text: string, lang: Lang) {
         [/в двете посоки/gi, "both directions"],
         [/северно от/gi, "north of"],
         [/част от паркинг/gi, "part of car park"],
+        [/при кръстовището с/gi, "at the junction with"],
+        [/кръстовище с/gi, "junction with"],
+        [/кръстовище/gi, "junction"],
+        [/в (\d{1,2}:\d{2})/g, "at $1"],
+        [/от (\d{1,2}:\d{2})/g, "from $1"],
+        [/до (\d{1,2}:\d{2})/g, "until $1"],
         [/ч\. на/gi, "on"], [/ч\./gi, ""],
         [/ул\./gi, "St."], [/бул\./gi, "Blvd."], [/пл\./gi, "Sq."], [/кв\./gi, "district"], [/с\./gi, "village"],
+        [/част от/gi, "part of"],
       ]
     : [
         [/преминаване на колоната(?:; 2-ро влизане[^)]*)?/gi, "passaggio del gruppo"],
@@ -362,20 +376,35 @@ export function localizeClosureText(text: string, lang: Lang) {
         [/в двете посоки/gi, "in entrambe le direzioni"],
         [/северно от/gi, "a nord di"],
         [/част от паркинг/gi, "parte del parcheggio"],
+        [/при кръстовището с/gi, "all'incrocio con"],
+        [/кръстовище с/gi, "incrocio con"],
+        [/кръстовище/gi, "incrocio"],
+        [/в (\d{1,2}:\d{2})/g, "alle $1"],
+        [/от (\d{1,2}:\d{2})/g, "dalle $1"],
+        [/до (\d{1,2}:\d{2})/g, "fino alle $1"],
         [/ч\. на/gi, "del"], [/ч\./gi, ""],
         [/ул\./gi, "Via"], [/бул\./gi, "Viale"], [/пл\./gi, "Piazza"], [/кв\./gi, "quartiere"], [/с\./gi, "villaggio"],
+        [/част от/gi, "parte di"],
       ];
   for (const [pattern, replacement] of phrases) result = result.replace(pattern, replacement);
   const words: Array<[RegExp, string]> = lang === "en"
     ? [
         [wb("финиш"), "finish"], [wb("старт"), "start"], [wb("финал"), "finish"],
         [wb("отклонение"), "junction"], [wb("разклон"), "junction"],
+        [wb("забрана"), "ban"], [wb("паркиране"), "parking"],
+        [wb("движение"), "traffic"], [wb("затваряне"), "closure"],
+        [wb("на"), "of"], [wb("при"), "at"], [wb("от"), "from"], [wb("до"), "to"], [wb("с"), "with"], [wb("в"), "in"], [wb("за"), "for"],
       ]
     : [
         [wb("финиш"), "arrivo"], [wb("старт"), "partenza"], [wb("финал"), "arrivo"],
         [wb("отклонение"), "bivio"], [wb("разклон"), "bivio"],
+        [wb("забрана"), "divieto"], [wb("паркиране"), "parcheggio"],
+        [wb("движение"), "traffico"], [wb("затваряне"), "chiusura"],
+        [wb("на"), "di"], [wb("при"), "presso"], [wb("от"), "da"], [wb("до"), "a"], [wb("с"), "con"], [wb("в"), "in"], [wb("за"), "per"],
       ];
   for (const [pattern, replacement] of words) result = result.replace(pattern, replacement);
+  // Restore protected quoted names
+  result = result.replace(/\u0001(\d+)\u0001/g, (_, i) => quoted[Number(i)] ?? "");
   return result.replace(/\s{2,}/g, " ").trim();
 }
 
