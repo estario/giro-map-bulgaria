@@ -873,6 +873,33 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
         // stage's finish already represents this point.
         if (isSharedStartSkip) return;
 
+        // Detect waypoints that share (almost) the same coordinates with an
+        // earlier waypoint in the same stage (e.g. circuit "2-ра обиколка"
+        // points in Sozopol revisit the same locations). Spider-fan them
+        // around the original point so every KM pin stays individually
+        // visible and clickable.
+        let renderCoords: [number, number] = wp.coords as [number, number];
+        if (!isStart && !isFinish) {
+          const duplicates: number[] = [];
+          for (let j = 0; j < stage.waypoints.length; j++) {
+            if (sameCoords(stage.waypoints[j].coords as [number, number], wp.coords as [number, number])) {
+              duplicates.push(j);
+            }
+          }
+          if (duplicates.length > 1) {
+            const order = duplicates.indexOf(i); // 0 = first occurrence
+            if (order > 0) {
+              // Offset ~80–140 m in a small ring around the original point
+              const angle = (order * 137) * (Math.PI / 180);
+              const r = 0.0009 + (order - 1) * 0.0004;
+              renderCoords = [
+                (wp.coords as [number, number])[0] + Math.cos(angle) * r,
+                (wp.coords as [number, number])[1] + Math.sin(angle) * r * 1.35,
+              ];
+            }
+          }
+        }
+
         const icon = isSharedFinish
           ? combinedFinishStartIcon(stage.color, nextStage!.color, markerFinishLabel(stage.id, lang), markerStartLabel(nextStage!.id, lang), localizePlaceName(stage.to, lang))
           : wp.name.toLowerCase().includes("км0")
@@ -882,7 +909,7 @@ export default function RouteMap({ stages, activeStageId, onUserLocation }: Prop
             : isFinish
               ? finishFlagIcon(stage.color, markerFinishLabel(stage.id, lang), localizePlaceName(stage.to, lang))
               : makeIcon(stage.color, `${stage.id}`);
-        const marker = L.marker(wp.coords as L.LatLngExpression, {
+        const marker = L.marker(renderCoords as L.LatLngExpression, {
           icon,
           // KM waypoint markers were getting buried under viewing-spot (800),
           // closure (700) and event (500) pins. Lift intermediate waypoints
